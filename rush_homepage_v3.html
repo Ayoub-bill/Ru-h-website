@@ -1,1133 +1,619 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="dark">
+<html lang="fr" data-theme="light">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description"
-    content="RU$H — Borne de commande, Web App et Fidélité pour fast-foods indépendants. Opérationnel en 72h. Powered by Bill-App.">
+  <meta name="description" content="RU$H — Borne de commande, Web App et Fidélité pour fast-foods indépendants. Opérationnel en 72h.">
   <title>RU$H — Encaissez plus. Plus vite. Sans friction.</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: ['class', '[data-theme="dark"]'],
+      theme: {
+        extend: {
+          colors: {
+            orange: 'var(--orange)',
+            'orange-hover': 'var(--orange-hover)',
+            bg: 'var(--bg)',
+            surface: 'var(--surface)',
+            text: 'var(--text)',
+            border: 'var(--border)',
+            muted: 'var(--muted)',
+          },
+          fontFamily: {
+            sans: ['"Futura PT"', '"Jost"', 'sans-serif'],
+          },
+          animation: {
+            'marquee': 'marquee 15s linear infinite',
+          },
+          keyframes: {
+            marquee: {
+              '0%': { transform: 'translateX(0%)' },
+              '100%': { transform: 'translateX(-100%)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,400;0,500;0,700;0,900;1,700;1,900&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,400;0,500;0,700;0,900;1,700;1,900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    /* ═══════════════════════════════════════════
-     RESET
-  ═══════════════════════════════════════════ */
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+  
+  <style type="text/tailwindcss">
+    @layer base {
+      :root {
+        --orange: #FF3D00;
+        --orange-hover: #D63300;
+        --bg: #F9F9F9;
+        --surface: #FFFFFF;
+        --text: #1A1A1A;
+        --border: #000000;
+        --muted: #666666;
+      }
+      [data-theme="dark"] {
+        --bg: #0A0A0A;
+        --surface: #141414;
+        --text: #FFFFFF;
+        --border: #333333;
+        --muted: #999999;
+      }
+      
+      body {
+        @apply bg-bg text-text font-sans antialiased selection:bg-orange selection:text-white;
+      }
 
-    ul,
-    ol {
-      list-style: none;
+      h1, h2, h3, .impact-text {
+        @apply uppercase italic font-black tracking-tighter leading-none;
+      }
+      
+      [data-theme="dark"] .invert-on-dark {
+        filter: brightness(0) invert(1);
+      }
     }
+    
+    /* Utilitaires Scrollbars */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    img {
-      display: block;
-      max-width: 100%;
-      height: auto;
-    }
-
-    /* ═══════════════════════════════════════════
-     CSS VARIABLES — LIGHT (default)
-  ═══════════════════════════════════════════ */
-    :root {
-      /* 10% — Impulsion */
-      --orange: #FF3D00;
-      --orange-hover: #E63600;
-      /* 60% — Structure */
-      --bg: #F5F5F7;
-      --surface: #FFFFFF;
-      /* 30% — Typographie & Contraste */
-      --text: #000000;
-      --border: #000000;
-      --muted: #666666;
-      /* Utility */
-      --logo-invert: 0;
-      --surface-hover: #F0F0F0;
-    }
-
-    /* ═══════════════════════════════════════════
-     CSS VARIABLES — DARK
-  ═══════════════════════════════════════════ */
-    [data-theme="dark"] {
-      --bg: #0A0A0A;
-      --surface: #141414;
-      --text: #FFFFFF;
-      --border: #333333;
-      --muted: #999999;
-      --logo-invert: 1;
-      --surface-hover: #1E1E1E;
-    }
-
-    /* ═══════════════════════════════════════════
-     TYPOGRAPHY — Futura / Jost fallback
-  ═══════════════════════════════════════════ */
-    body {
-      font-family: 'Futura', 'Jost', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 16px;
-      font-weight: 500;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      transition: background 0.15s cubic-bezier(0.25, 1, 0.5, 1),
-        color 0.15s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    h1,
-    h2,
-    h3,
-    .impact-text {
-      font-family: 'Futura', 'Jost', sans-serif;
-      text-transform: uppercase;
-      font-style: italic;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      line-height: 0.95;
-    }
-
-    /* ═══════════════════════════════════════════
-     BUTTONS
-  ═══════════════════════════════════════════ */
-    .btn-primary {
-      display: inline-block;
-      font-family: 'Futura', 'Jost', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-      color: #FFFFFF;
-      background: var(--orange);
-      border: 1px solid var(--orange);
-      padding: 14px 28px;
-      cursor: pointer;
-      transition: background 0.1s cubic-bezier(0.25, 1, 0.5, 1),
-        border-color 0.1s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    .btn-primary:hover {
-      background: var(--orange-hover);
-      border-color: var(--orange-hover);
-    }
-
-    .btn-ghost {
-      display: inline-block;
-      font-family: 'Futura', 'Jost', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-      color: var(--text);
-      background: transparent;
-      border: 1px solid var(--text);
-      padding: 14px 28px;
-      cursor: pointer;
-      transition: background 0.1s cubic-bezier(0.25, 1, 0.5, 1),
-        color 0.1s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    .btn-ghost:hover {
-      background: var(--text);
-      color: var(--surface);
-    }
-
-    /* ═══════════════════════════════════════════
-     BANNER
-  ═══════════════════════════════════════════ */
-    .banner {
-      background: var(--text);
-      color: var(--bg);
-      text-align: center;
-      padding: 12px 20px;
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      transition: background 0.15s, color 0.15s;
-    }
-
-    .banner .highlight {
-      color: var(--orange);
-    }
-
-    /* ═══════════════════════════════════════════
-     NAV
-  ═══════════════════════════════════════════ */
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 0 40px;
-      height: 72px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: background 0.15s, border-color 0.15s;
-    }
-
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      width: 120px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .nav-logo img {
-      position: absolute;
-      height: 100px;
-      width: auto;
-      top: 50%;
-      left: 50%;
-      transform: translate(-52%, -50%);
-      max-width: none;
-      transition: filter 0.15s;
-    }
-
-    /* Dark mode: invert the dark parts of the logo to white, preserve orange */
-    [data-theme="dark"] .nav-logo img,
-    [data-theme="dark"] .footer-logo img {
-      filter: brightness(0) invert(1);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 32px;
-    }
-
-    .nav-links a {
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text);
-      transition: color 0.1s;
-    }
-
-    .nav-links a:hover {
-      color: var(--orange);
-    }
-
-    .nav-cta {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .theme-toggle {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-      width: 42px;
-      height: 42px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.1s, color 0.1s, border-color 0.15s;
-    }
-
-    .theme-toggle:hover {
-      background: var(--text);
-      color: var(--surface);
-    }
-
-    /* ═══════════════════════════════════════════
-     HERO — 2 col Bento
-  ═══════════════════════════════════════════ */
-    .hero {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .hero-content {
-      background: var(--surface);
-      padding: 100px 60px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      border-right: 1px solid var(--border);
-      transition: background 0.15s;
-    }
-
-    .hero-tag {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--muted);
-      letter-spacing: 2px;
-      margin-bottom: 32px;
-    }
-
-    .hero h1 {
-      font-size: clamp(48px, 6vw, 80px);
-      line-height: 0.9;
-      margin-bottom: 28px;
-    }
-
-    .hero h1 .accent {
-      color: var(--orange);
-    }
-
-    .hero-desc {
-      font-size: 17px;
-      color: var(--muted);
-      font-weight: 500;
-      margin-bottom: 48px;
-      max-width: 440px;
-      line-height: 1.5;
-    }
-
-    .hero-image {
-      background: var(--surface);
-      overflow: hidden;
-      position: relative;
-      min-height: 520px;
-      transition: background 0.15s;
-    }
-
-    .hero-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      position: absolute;
-      inset: 0;
-    }
-
-    /* ═══════════════════════════════════════════
-     LOGOS BAR (Ils font confiance)
-  ═══════════════════════════════════════════ */
-    .logos-bar {
-      padding: 48px 40px;
-      background: var(--bg);
-      border-bottom: 1px solid var(--border);
-      text-align: center;
-      transition: background 0.15s;
-    }
-
-    .logos-bar p {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--muted);
-      letter-spacing: 2px;
-      margin-bottom: 28px;
-    }
-
-    .logos-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 48px;
-      flex-wrap: wrap;
-    }
-
-    .logos-row img {
-      height: 36px;
-      width: auto;
-      object-fit: contain;
-      opacity: 0.6;
-      transition: opacity 0.15s;
-    }
-
-    [data-theme="dark"] .logos-row img {
-      filter: brightness(0) invert(1);
-      opacity: 0.5;
-    }
-
-    .logos-row img:hover {
-      opacity: 1;
-    }
-
-    /* ═══════════════════════════════════════════
-     BENTO GRID SYSTEM
-  ═══════════════════════════════════════════ */
-    .section-grid {
-      display: grid;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .col-3 {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .col-4 {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    .grid-header {
-      grid-column: 1 / -1;
-      padding: 80px 60px 48px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      transition: background 0.15s;
-    }
-
-    .grid-header h2 {
-      font-size: clamp(36px, 4vw, 52px);
-      line-height: 0.95;
-    }
-
-    .grid-header h2 .accent,
-    .products-grid .grid-header h2 .accent {
-      color: var(--orange);
-    }
-
-    .grid-header .subtitle {
-      font-size: 17px;
-      margin-top: 20px;
-      color: var(--muted);
-      max-width: 560px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: 1.5;
-    }
-
-    .bento-box {
-      padding: 56px 40px;
-      border-right: 1px solid var(--border);
-      background: var(--surface);
-      transition: background 0.15s cubic-bezier(0.25, 1, 0.5, 1);
-      position: relative;
-    }
-
-    /* Remove right border on last column */
-    .col-3>.bento-box:nth-child(3n+1) {
-      border-right: 1px solid var(--border);
-    }
-
-    .col-3>.bento-box:last-child,
-    .col-4>.bento-box:last-child {
-      border-right: none;
-    }
-
-    .bento-box:hover {
-      background: var(--surface-hover);
-    }
-
-    .bento-box h3 {
-      font-size: 24px;
-      line-height: 1;
-      margin-bottom: 16px;
-    }
-
-    .bento-box p {
-      font-size: 15px;
-      color: var(--muted);
-      line-height: 1.55;
-      font-style: normal;
-    }
-
-    .box-icon {
-      font-size: 28px;
-      margin-bottom: 24px;
-      display: block;
-      line-height: 1;
-    }
-
-    /* Bento box with image */
-    .bento-box--image {
-      padding: 0;
-      overflow: hidden;
-      position: relative;
-      min-height: 320px;
-    }
-
-    .bento-box--image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      position: absolute;
-      inset: 0;
-    }
-
-    /* Span utilities */
-    .span-2 {
-      grid-column: span 2;
-    }
-
-    .no-right-border {
-      border-right: none !important;
-    }
-
-    .no-bottom-border {
-      border-bottom: none !important;
-    }
-
-    /* ═══════════════════════════════════════════
-     PRODUCTS SECTION — Asymmetric Bento
-  ═══════════════════════════════════════════ */
-    .products-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .products-grid .grid-header {
-      grid-column: 1 / -1;
-    }
-
-    .product-card {
-      padding: 56px 40px;
-      border-right: 1px solid var(--border);
-      background: var(--surface);
-      transition: background 0.15s cubic-bezier(0.25, 1, 0.5, 1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .product-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
+    /* Moteur d'animations Brutalistes (Agency Grade) */
+    .reveal-up {
       opacity: 0;
-      transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-      z-index: 0;
+      transform: translateY(40px);
+      transition: opacity 0.5s ease-out, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
-    .product-card::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.3) 100%);
+    .reveal-left {
       opacity: 0;
-      transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-      z-index: 1;
+      transform: translateX(-40px);
+      transition: opacity 0.5s ease-out, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
-    .product-card:hover::before,
-    .product-card:hover::after {
+    .is-visible {
       opacity: 1;
+      transform: translate(0, 0);
     }
-
-    .product-card:hover {
-      background: var(--surface);
-    }
-
-    .product-card > * {
-      position: relative;
-      z-index: 2;
-    }
-
-    .product-card:hover .product-num,
-    .product-card:hover h3,
-    .product-card:hover p {
-      color: #FFFFFF;
-    }
-
-    .product-card:hover .product-num {
-      color: var(--orange);
-    }
-
-    /* Individual product card backgrounds */
-    .product-card--borne::before {
-      background-image: url('./modules/Borne.jpg');
-    }
-
-    .product-card--webapp::before {
-      background-image: url('./modules/webapp.jpg');
-    }
-
-    .product-card--fidelite::before {
-      background-image: url('./modules/fidélité.jpg');
-    }
-
-    .product-card:last-child {
-      border-right: none;
-    }
-
-    .product-card .product-num {
-      font-family: 'Futura', 'Jost', sans-serif;
-      font-size: 56px;
-      font-weight: 900;
-      font-style: italic;
-      color: var(--orange);
-      line-height: 1;
-      margin-bottom: 24px;
-      transition: color 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    .product-card h3 {
-      font-size: 26px;
-      line-height: 1;
-      margin-bottom: 16px;
-      transition: color 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    .product-card p {
-      font-size: 15px;
-      color: var(--muted);
-      line-height: 1.55;
-      font-style: normal;
-      transition: color 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    /* ═══════════════════════════════════════════
-     ROI BANNER
-  ═══════════════════════════════════════════ */
-    .roi-banner {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      background: var(--text);
-      color: var(--bg);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .roi-item {
-      padding: 60px 40px;
-      border-right: 1px solid var(--border);
-      transition: background 0.15s;
-    }
-
-    .roi-item:last-child {
-      border-right: none;
-    }
-
-    .roi-item:hover {
-      background: rgba(255, 255, 255, 0.03);
-    }
-
-    .roi-num {
-      font-family: 'Futura', 'Jost', sans-serif;
-      font-weight: 900;
-      font-size: clamp(48px, 5vw, 68px);
-      line-height: 1;
-      color: var(--orange);
-      font-style: italic;
-    }
-
-    .roi-label {
-      font-size: 13px;
-      text-transform: uppercase;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      margin-top: 12px;
-      opacity: 0.7;
-    }
-
-    /* ═══════════════════════════════════════════
-     CTA SECTION
-  ═══════════════════════════════════════════ */
-    .cta-section {
-      padding: 120px 40px;
-      background: url('./Rush-gradient-bg.jpg') no-repeat center center;
-      background-size: cover;
-      text-align: center;
-      border-bottom: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Dark overlay for contrast */
-    .cta-section::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.55);
-      z-index: 1;
-    }
-
-    .cta-section > * {
-      position: relative;
-      z-index: 2;
-    }
-
-    .cta-section h2 {
-      font-size: clamp(40px, 5vw, 72px);
-      line-height: 0.95;
-      margin-bottom: 24px;
-      color: #FFFFFF;
-    }
-
-    /* Orange rectangle highlight behind keyword */
-    .cta-section .accent-highlight {
-      color: #FFFFFF;
-      position: relative;
-      display: inline-block;
-      padding: 0 12px;
-      margin: 0 4px;
-    }
-
-    .cta-section .accent-highlight::before {
-      content: '';
-      position: absolute;
-      inset: -4px -12px;
-      background: var(--orange);
-      z-index: -1;
-      transform: skewX(-4deg);
-    }
-
-    .cta-section p {
-      font-size: 17px;
-      color: rgba(255, 255, 255, 0.85);
-      max-width: 480px;
-      margin: 0 auto 48px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: 1.5;
-    }
-
-    .cta-section .btn-ghost {
-      border-color: #FFFFFF;
-      color: #FFFFFF;
-    }
-
-    .cta-section .btn-ghost:hover {
-      background: #FFFFFF;
-      color: #000000;
-    }
-
-    .cta-buttons {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    /* ═══════════════════════════════════════════
-     FOOTER
-  ═══════════════════════════════════════════ */
-    footer {
-      background: var(--bg);
-      padding: 60px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      border-top: 1px solid var(--border);
-      transition: background 0.15s;
-    }
-
-    .footer-logo {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .footer-logo-wrap {
-      width: 100px;
-      height: 36px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .footer-logo-wrap img {
-      position: absolute;
-      height: 90px;
-      width: auto;
-      top: 50%;
-      left: 50%;
-      transform: translate(-52%, -50%);
-      max-width: none;
-    }
-
-    .footer-powered {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 40px;
-    }
-
-    .footer-links a {
-      color: var(--text);
-      font-weight: 700;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      transition: color 0.1s;
-    }
-
-    .footer-links a:hover {
-      color: var(--orange);
-    }
-
-    /* ═══════════════════════════════════════════
-     RESPONSIVE — Mobile First Breakpoints
-  ═══════════════════════════════════════════ */
-    @media (max-width: 1024px) {
-      .hero {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-content {
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        padding: 80px 40px;
-      }
-
-      .hero-image {
-        min-height: 400px;
-      }
-
-      .products-grid,
-      .col-3 {
-        grid-template-columns: 1fr;
-      }
-
-      .product-card,
-      .bento-box {
-        border-right: none !important;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .product-card:last-child,
-      .bento-box:last-child {
-        border-bottom: none;
-      }
-
-      .col-4 {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .col-4>.bento-box {
-        border-bottom: 1px solid var(--border);
-      }
-
-      .col-4>.bento-box:nth-child(even) {
-        border-right: none !important;
-      }
-
-      .span-2 {
-        grid-column: span 1;
-      }
-
-      .roi-banner {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .roi-item {
-        border-bottom: 1px solid var(--border);
-      }
-
-      .roi-item:nth-child(even) {
-        border-right: none;
-      }
-    }
-
-    @media (max-width: 640px) {
-      nav {
-        padding: 0 20px;
-      }
-
-      .nav-links {
-        display: none;
-      }
-
-      .hero-content {
-        padding: 60px 24px;
-      }
-
-      .hero-image {
-        min-height: 300px;
-      }
-
-      .grid-header {
-        padding: 60px 24px 36px;
-      }
-
-      .product-card,
-      .bento-box {
-        padding: 40px 24px;
-      }
-
-      .col-4 {
-        grid-template-columns: 1fr;
-      }
-
-      .col-4>.bento-box {
-        border-right: none !important;
-      }
-
-      .roi-banner {
-        grid-template-columns: 1fr;
-      }
-
-      .roi-item {
-        border-right: none !important;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .roi-item:last-child {
-        border-bottom: none;
-      }
-
-      .cta-section {
-        padding: 80px 24px;
-      }
-
-      footer {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 40px;
-        padding: 40px 24px;
-      }
-    }
+    .delay-100 { transition-delay: 100ms; }
+    .delay-200 { transition-delay: 200ms; }
+    .delay-300 { transition-delay: 300ms; }
   </style>
 </head>
 
 <body>
 
-  <!-- ═══════════════ BANNER ═══════════════ -->
-  <div class="banner">
-    🎯 Offre de lancement — <span class="highlight">1er mois offert</span> pour tout restaurant inscrit avant le 31
-    juillet
+  <!-- ═══════════════ BANNER URGENCY ═══════════════ -->
+  <div class="bg-black border-b border-border flex overflow-hidden no-scrollbar whitespace-nowrap py-3">
+    <div class="animate-marquee flex items-center gap-10 text-[11px] font-bold uppercase tracking-[0.2em] text-white">
+      <span>🎯 OFFRE DE LANCEMENT — <span class="text-orange">1ER MOIS OFFERT</span> AVANT LE 31 JUILLET</span>
+      <span>🎯 OFFRE DE LANCEMENT — <span class="text-orange">1ER MOIS OFFERT</span> AVANT LE 31 JUILLET</span>
+      <span>🎯 OFFRE DE LANCEMENT — <span class="text-orange">1ER MOIS OFFERT</span> AVANT LE 31 JUILLET</span>
+      <span>🎯 OFFRE DE LANCEMENT — <span class="text-orange">1ER MOIS OFFERT</span> AVANT LE 31 JUILLET</span>
+    </div>
   </div>
 
   <!-- ═══════════════ NAV ═══════════════ -->
-  <nav>
-    <a class="nav-logo" href="#" aria-label="RU$H — Accueil">
-      <img src="./Rush-logo.svg" alt="RU$H" />
+  <nav class="sticky top-0 z-50 bg-surface h-[80px] flex items-center justify-between border-b border-border transition-colors duration-200">
+    <a class="flex items-center justify-center h-full w-[160px] border-r border-border" href="#" aria-label="RU$H — Accueil">
+      <img src="./Rush-logo.svg" alt="RU$H" class="h-[90px] w-auto invert-on-dark" />
     </a>
-    <ul class="nav-links">
-      <li><a href="#produits">Le Bundle</a></li>
-      <li><a href="#pourquoi">Pourquoi Rush</a></li>
-      <li><a href="#methode">Méthode</a></li>
+    
+    <ul class="hidden sm:flex h-full">
+      <li class="h-full"><a href="#produits" class="flex items-center h-full px-8 text-[12px] font-bold uppercase tracking-[0.2em] border-l border-border hover:bg-text hover:text-surface transition-colors duration-200">Le Bundle</a></li>
+      <li class="h-full"><a href="#avis" class="flex items-center h-full px-8 text-[12px] font-bold uppercase tracking-[0.2em] border-l border-border hover:bg-text hover:text-surface transition-colors duration-200">Avis</a></li>
     </ul>
-    <div class="nav-cta">
-      <button class="theme-toggle" id="themeToggle" aria-label="Basculer le thème"><i class="fa-solid fa-sun"></i></button>
-      <a href="#" class="btn-primary">Prendre RDV</a>
+    
+    <div class="flex h-full">
+      <button class="w-[80px] h-full flex items-center justify-center border-l border-border text-text hover:bg-text hover:text-surface transition-colors duration-200" id="themeToggle">
+        <i class="fa-solid fa-sun"></i>
+      </button>
+      <a href="#contact" class="flex items-center justify-center h-full px-10 text-[13px] font-black uppercase tracking-[0.15em] text-white bg-orange hover:bg-orange-hover transition-colors duration-200">
+        Acheter
+      </a>
     </div>
   </nav>
 
   <!-- ═══════════════ HERO ═══════════════ -->
-  <section class="hero">
-    <div class="hero-content">
-      <div class="hero-tag">Borne · Web App · Fidélité</div>
-      <h1>Encaissez plus. Plus vite. <span class="accent">Sans friction.</span></h1>
-      <p class="hero-desc">Votre borne tourne en 72h. Vos clients commandent seuls. Vous encaissez. C'est tout.</p>
-      <div>
-        <a href="#" class="btn-primary">Prendre RDV →</a>
+  <section class="border-b border-border bg-bg">
+    <div class="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] min-h-[85vh]">
+      
+      <!-- ▌MODULE A -->
+      <div class="bg-surface p-12 lg:p-24 flex flex-col justify-end border-b lg:border-b-0 lg:border-r border-border reveal-left">
+        <div class="text-[12px] font-bold uppercase tracking-[0.3em] text-muted mb-12 flex items-center gap-4">
+          <span class="w-8 h-[1px] bg-border"></span> Borne · Web App · Fidélité
+        </div>
+        <!-- SCALPEL ORANGE : On frappe sur l'argent -->
+        <h1 class="text-[clamp(64px,8vw,120px)] leading-[0.85] mb-10 text-text">
+          ENCAISSEZ<br>PLUS VITE.<br>FAITES DU<br><span class="text-orange">CHIFFRE.</span>
+        </h1>
+        <p class="text-[18px] text-muted font-medium mb-12 max-w-[440px] leading-[1.5]">
+          Votre borne tourne en <span class="text-orange font-bold">72h</span>. Vos clients commandent seuls. Vous encaissez. C'est tout.
+        </p>
+        <div class="flex">
+          <a href="#contact" class="inline-flex items-center gap-4 text-[14px] font-black uppercase tracking-[0.15em] text-white bg-orange px-12 py-5 hover:bg-orange-hover transition-colors duration-200">
+            Prendre RDV <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
       </div>
-    </div>
-    <div class="hero-image">
-      <img src="./Mockups/stand.jpg" alt="Borne de commande RU$H en action dans un fast-food" />
+
+      <!-- ▌MODULE B + C + D -->
+      <div class="grid grid-rows-[1.5fr_1fr]">
+
+        <!-- ▌MODULE B -->
+        <div class="bg-[#F5F5F7] border-b border-border relative flex items-center justify-center overflow-hidden group reveal-up delay-100">
+          <div class="absolute top-8 left-8 text-[11px] font-bold uppercase tracking-[0.3em] z-10">
+            <span class="text-[10px] text-black bg-white px-3 py-1 font-black">01 — BORNE</span>
+          </div>
+          <img src="./Modules/Borne.jpg" alt="Interface borne de commande" class="h-full w-auto object-cover transition-transform duration-700 group-hover:scale-105" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-[1fr_1fr]">
+
+          <!-- ▌MODULE C -->
+          <div class="bg-surface border-b sm:border-b-0 sm:border-r border-border relative flex items-center justify-center group overflow-hidden reveal-up delay-200">
+            <div class="absolute top-6 left-6 text-[10px] font-bold uppercase tracking-[0.3em] z-10">
+              <span class="text-[10px] text-black bg-white px-3 py-1 font-black">02 — WEB APP</span>
+            </div>
+            <img src="./Modules/webapp.jpg" alt="Borne" class="h-full w-auto object-cover transition-transform duration-700 group-hover:scale-105" />
+          </div>
+
+          <!-- ▌MODULE D (Avec Icône Rocket et KPI Orange) -->
+          <div class="bg-black relative overflow-hidden flex flex-col justify-end p-8 lg:p-12 group cursor-default reveal-up delay-300">
+            <img src="./Modules/webapp.jpg" alt="Web app" class="absolute inset-0 w-full h-full object-cover opacity-40 grayscale mix-blend-overlay transition-transform duration-700 group-hover:scale-105" />
+            
+            <div class="relative z-10 flex flex-col items-start">
+              
+              <!-- Rocket Icon -->
+              <div class="text-orange mb-4 transition-transform duration-500 group-hover:-translate-y-3 group-hover:translate-x-3">
+                <svg height="80px" width="80px" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+                  <path d="m256,79.2c-5.8,0-10.4,4.7-10.4,10.4v14.4c0,5.8 4.7,10.4 10.4,10.4s10.4-4.7 10.4-10.4v-14.4c0-5.8-4.6-10.4-10.4-10.4z"/>
+                  <path d="m335.3,204.8l12.2-69.3c8.6-49.1-24.8-96.5-87.3-123.8-2.7-1.2-5.7-1.2-8.3,0-62.5,27.2-95.9,74.6-87.3,123.8l12.2,69.3c-62.2,19.6-101.8,60.7-101.8,106.5 0,29.5 16.7,57.5 46.6,79.4 5.2,3.8 10.1,1.4 11.8,0.3 3.6-2.4 5.4-6.7 4.5-10.9-0.7-3.4-11.9-43.2 57.3-70.1l1,5.9c3.7,21.2 28.9,36.6 59.8,36.6 30.9,0 56-15.4 59.8-36.6l1-5.9c69.9,28.1 58,66.7 57.3,70-0.9,4.2 0.9,8.6 4.5,10.9 5,3.2 10,1 11.8-0.3 30.1-21.7 46.6-49.9 46.6-79.4-5.68434e-14-45.7-39.6-86.8-101.7-106.4zm-218.1,154.5c-13.9-14.7-21.3-31.2-21.3-48.1 0-35.8 32.8-68.7 84.5-85.8l11.2,63.7c-40.9,14-68.6,40.2-74.4,70.2zm178-47c-1.6,9.3-17.1,19.4-39.2,19.4-22.1,0-37.6-10.1-39.2-19.4l-31.7-180.4c-6.7-38.1 20.4-75.8 70.9-99.2 50.5,23.3 77.6,61 70.9,99.2l-31.7,180.4zm99.6,47.1c-5.9-30-33.5-56.3-74.4-70.1l11.2-63.7c51.7,17 84.5,49.9 84.5,85.8 0.1,16.7-7.4,33.3-21.3,48z"/>
+                  <path d="m315.8,379.5c-5.8,0-10.4,4.7-10.4,10.4v63.3c0,5.8 4.7,10.4 10.4,10.4 5.8,0 10.4-4.7 10.4-10.4v-63.3c0-5.8-4.6-10.4-10.4-10.4z"/>
+                  <path d="m256,379.5c-5.8,0-10.4,4.7-10.4,10.4v100.7c0,5.8 4.7,10.4 10.4,10.4s10.4-4.7 10.4-10.4v-100.7c0-5.8-4.6-10.4-10.4-10.4z"/>
+                  <path d="m196.2,379.5c-5.8,0-10.4,4.7-10.4,10.4v63.3c0,5.8 4.7,10.4 10.4,10.4s10.4-4.7 10.4-10.4v-63.3c0-5.8-4.6-10.4-10.4-10.4z"/>
+                </svg>
+              </div>
+              
+              <div class="text-[clamp(56px,6vw,84px)] font-black italic leading-[0.8] text-orange mb-6 transition-transform duration-300 group-hover:translate-x-2">
+                +30%
+              </div>
+              
+              <div class="text-[12px] font-bold uppercase tracking-[0.3em] text-white/80">
+                De ticket moyen<br>dès le 1er mois
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- ═══════════════ LOGOS ═══════════════ -->
-  <div class="logos-bar">
-    <p>Ils font confiance à Rush</p>
-    <div class="logos-row">
-      <img src="./Clients/burger-king.png" alt="Burger King" />
-      <img src="./Clients/burger's.png" alt="Burger's" />
-      <img src="./Clients/GOMU.png" alt="GOMU" />
-      <img src="./Clients/Green 2 green.png" alt="Green 2 Green" />
+  <!-- ═══════════════ LOGOS CLIENTS ═══════════════ -->
+  <div class="py-12 px-12 bg-bg text-center border-b border-border flex flex-col md:flex-row items-center justify-between gap-8 reveal-up">
+    <p class="text-[11px] font-bold uppercase text-muted tracking-[0.3em] shrink-0">Ils font confiance à RU$H</p>
+    <div class="flex justify-center md:justify-end items-center gap-12 flex-wrap flex-1 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+      <img src="./Clients/burger-king.png" alt="Burger King" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./Clients/burger's.png" alt="Burger's" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./Clients/GOMU.png" alt="GOMU" class="h-6 w-auto object-contain invert-on-dark" />
+       <img src="./Clients/burger-king.png" alt="Burger King" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./Clients/burger's.png" alt="Burger's" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./Clients/GOMU.png" alt="GOMU" class="h-6 w-auto object-contain invert-on-dark" />
+       <img src="./Clients/burger-king.png" alt="Burger King" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./Clients/burger's.png" alt="Burger's" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./Clients/GOMU.png" alt="GOMU" class="h-6 w-auto object-contain invert-on-dark" />
+       <img src="./Clients/burger-king.png" alt="Burger King" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./Clients/burger's.png" alt="Burger's" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./Clients/GOMU.png" alt="GOMU" class="h-6 w-auto object-contain invert-on-dark" />
     </div>
   </div>
 
-  <!-- ═══════════════ PRODUITS — LE BUNDLE ═══════════════ -->
-  <section id="produits" class="products-grid">
-    <div class="grid-header">
-      <h2>Trois <span class="accent">armes</span>. Un seul <span class="accent">objectif</span>.</h2>
-      <p class="subtitle">Détruisez la file d'attente, automatisez vos ventes, fidélisez sans effort. Pas plus. Pas
-        moins.</p>
+  <!-- ═══════════════ LE BUNDLE ═══════════════ -->
+  <section id="produits" class="border-b border-border bg-bg">
+    
+    <div class="py-20 px-12 lg:py-32 lg:px-24 bg-surface border-b border-border reveal-up">
+      <!-- SCALPEL ORANGE : On isole l'objectif -->
+      <h2 class="text-[clamp(48px,6vw,84px)] leading-[0.85] text-text uppercase italic font-black tracking-tighter">
+        TROIS ARMES.<br>UN SEUL <span class="text-orange">OBJECTIF.</span>
+      </h2>
+      <p class="text-[18px] text-muted max-w-[540px] mt-8 font-medium leading-[1.5]">
+        Détruisez la file d'attente, automatisez vos ventes, fidélisez sans effort. L'essentiel de la performance, sans la complexité.
+      </p>
     </div>
-    <div class="product-card product-card--borne">
-      <div class="product-num">01</div>
-      <h3>Borne de commande</h3>
-      <p>Vos clients commandent seuls, plus vite, et dépensent plus grâce à l'upsell automatique. La file d'attente
-        disparaît.</p>
-    </div>
-    <div class="product-card product-card--webapp">
-      <div class="product-num">02</div>
-      <h3>Web App</h3>
-      <p>Click & Collect, QR Code table, commande à distance. Zéro téléchargement. Le client est autonome en 10
-        secondes.</p>
-    </div>
-    <div class="product-card product-card--fidelite" style="border-right: none;">
-      <div class="product-num">03</div>
-      <h3>Fidélité</h3>
-      <p>Points, récompenses automatiques. Faites revenir vos clients sans lever le petit doigt. La data vous
-        appartient.</p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3">
+      
+      <!-- PRODUIT 01 -->
+      <div class="group relative p-12 lg:p-16 bg-surface border-b lg:border-b-0 lg:border-r border-border overflow-hidden transition-colors duration-300 hover:text-white reveal-up delay-100">
+        <div class="absolute inset-0 bg-[url('./modules/Borne.jpg')] bg-cover bg-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+        <div class="absolute inset-0 bg-black/85 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+        
+        <div class="relative z-10 flex flex-col h-full justify-between min-h-[360px]">
+          <!-- Numéro en orange pour structurer la lecture -->
+          <div class="text-[84px] font-black italic text-orange leading-none transition-transform duration-300 group-hover:translate-x-2">01</div>
+          <div>
+            <h3 class="text-[32px] leading-none mb-6 text-text transition-colors duration-300 group-hover:text-white uppercase font-black tracking-tighter">Borne de commande</h3>
+            <p class="text-[16px] text-muted leading-relaxed font-medium transition-colors duration-300 group-hover:text-white/80">
+              Vos clients commandent seuls, plus vite. Le ticket moyen explose grâce à l'upsell.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUIT 02 -->
+      <div class="group relative p-12 lg:p-16 bg-surface border-b lg:border-b-0 lg:border-r border-border overflow-hidden transition-colors duration-300 hover:text-white reveal-up delay-200">
+        <div class="absolute inset-0 bg-[url('./modules/webapp.jpg')] bg-cover bg-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+        <div class="absolute inset-0 bg-black/85 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+        
+        <div class="relative z-10 flex flex-col h-full justify-between min-h-[360px]">
+          <div class="text-[84px] font-black italic text-orange leading-none transition-transform duration-300 group-hover:translate-x-2">02</div>
+          <div>
+            <h3 class="text-[32px] leading-none mb-6 text-text transition-colors duration-300 group-hover:text-white uppercase font-black tracking-tighter">Web App</h3>
+            <p class="text-[16px] text-muted leading-relaxed font-medium transition-colors duration-300 group-hover:text-white/80">
+              Click & Collect, QR Code. Zéro téléchargement. Le client est autonome en moins de 10s.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUIT 03 -->
+      <div class="group relative p-12 lg:p-16 bg-surface overflow-hidden transition-colors duration-300 hover:text-white reveal-up delay-300">
+        <div class="absolute inset-0 bg-[url('./modules/fidélité.jpg')] bg-cover bg-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+        <div class="absolute inset-0 bg-black/85 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+        
+        <div class="relative z-10 flex flex-col h-full justify-between min-h-[360px]">
+          <div class="text-[84px] font-black italic text-orange leading-none transition-transform duration-300 group-hover:translate-x-2">03</div>
+          <div>
+            <h3 class="text-[32px] leading-none mb-6 text-text transition-colors duration-300 group-hover:text-white uppercase font-black tracking-tighter">Fidélité</h3>
+            <p class="text-[16px] text-muted leading-relaxed font-medium transition-colors duration-300 group-hover:text-white/80">
+              Récompenses automatiques. Faites revenir vos clients sans lever le petit doigt.
+            </p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
   <!-- ═══════════════ POURQUOI RUSH ═══════════════ -->
-  <section id="pourquoi" class="section-grid col-3">
-    <div class="grid-header">
-      <h2><span class="accent">Simple</span>. <span class="accent">Rapide</span>. <span class="accent">Accompagné</span>.</h2>
-      <p class="subtitle">Pas de logiciel lourd. Pas de jargon. On vous aide à vendre plus, dès le premier service.</p>
+  <section id="pourquoi" class="border-b border-border bg-bg">
+    
+    <!-- En-tête Bento -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 border-b border-border bg-surface">
+      <div class="py-20 px-12 lg:py-32 lg:px-24 border-b lg:border-b-0 lg:border-r border-border flex flex-col justify-center reveal-left">
+        <!-- SCALPEL ORANGE : La vitesse est notre force -->
+        <h2 class="text-[clamp(48px,6vw,84px)] leading-[0.85] text-text uppercase italic font-black tracking-tighter">
+          SIMPLE. <span class="text-orange">RAPIDE.</span><br>ACCOMPAGNÉ.
+        </h2>
+        <p class="text-[18px] text-muted max-w-[540px] mt-8 font-medium leading-[1.5]">
+          Pas de logiciel lourd. Pas de jargon. On vous aide à vendre plus dès le premier service.
+        </p>
+      </div>
+      <div class="relative overflow-hidden group min-h-[300px] lg:min-h-full bg-black reveal-up delay-100">
+        <div class="absolute inset-0 bg-black/20 z-10 group-hover:bg-transparent transition-colors duration-500"></div>
+        <img src="./Mockups/stand.jpg" alt="Service au comptoir" class="absolute inset-0 w-full h-full object-cover grayscale opacity-90 transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 z-0" />
+      </div>
     </div>
-    <div class="bento-box">
-      <span class="box-icon">⚡</span>
-      <h3>Compris en 2 minutes</h3>
-      <p>Une offre claire, un bundle verrouillé. Pas de devis à rallonge, pas de modules inutiles.</p>
-    </div>
-    <div class="bento-box">
-      <span class="box-icon">🚀</span>
-      <h3>Opérationnel en 72h</h3>
-      <p>Votre borne encaisse dans 72h. On s'occupe de l'installation et de la formation de votre équipe.</p>
-    </div>
-    <div class="bento-box no-right-border">
-      <span class="box-icon">💰</span>
-      <h3>Rentable dès le 1er mois</h3>
-      <p>Un tarif transparent, sans surprise. Conçu pour booster votre ticket moyen immédiatement.</p>
-    </div>
-    <div class="bento-box span-2">
-      <span class="box-icon">🏆</span>
-      <h3>La puissance Bill-App. La vitesse Rush.</h3>
-      <p>Des années d'innovation terrain derrière chaque borne. Sans la complexité d'un système global. Powered by
-        Bill-App.</p>
-    </div>
-    <div class="bento-box no-right-border">
-      <span class="box-icon">🤝</span>
-      <h3>Un humain, pas un chatbot</h3>
-      <p>Un interlocuteur dédié, de l'installation au suivi post-lancement. On reste disponibles. Toujours.</p>
+
+    <!-- Avantages -->
+    <div class="grid grid-cols-1 lg:grid-cols-3">
+      <div class="group p-12 lg:p-16 bg-surface border-b lg:border-b-0 lg:border-r border-border hover:bg-black hover:text-white transition-colors duration-300 cursor-default reveal-up delay-100">
+        <div class="text-[32px] font-black italic text-orange mb-10">/01</div>
+        <h3 class="text-[28px] leading-none mb-6 uppercase font-black tracking-tighter text-text group-hover:text-white">Compris en 2 min</h3>
+        <p class="text-[16px] text-muted leading-relaxed font-medium transition-colors duration-300 group-hover:text-white/80">
+          Une offre claire, un bundle verrouillé. Pas de devis à rallonge.
+        </p>
+      </div>
+      
+      <div class="group p-12 lg:p-16 bg-[#F5F5F7] border-b lg:border-b-0 lg:border-r border-border hover:bg-black hover:text-white transition-colors duration-300 cursor-default reveal-up delay-200">
+        <div class="text-[32px] font-black italic text-orange mb-10">/02</div>
+        <h3 class="text-[28px] leading-none mb-6 uppercase font-black tracking-tighter text-text group-hover:text-white">Opérationnel en <span class="text-orange">72H</span></h3>
+        <p class="text-[16px] text-muted leading-relaxed font-medium transition-colors duration-300 group-hover:text-white/80">
+          Votre borne encaisse dans 72h. On s'occupe de l'installation totale.
+        </p>
+      </div>
+      
+      <div class="group p-12 lg:p-16 bg-surface hover:bg-black hover:text-white transition-colors duration-300 cursor-default reveal-up delay-300">
+        <div class="text-[32px] font-black italic text-orange mb-10">/03</div>
+        <h3 class="text-[28px] leading-none mb-6 uppercase font-black tracking-tighter text-text group-hover:text-white">Rentable à <span class="text-orange">J+1</span></h3>
+        <p class="text-[16px] text-muted leading-relaxed font-medium transition-colors duration-300 group-hover:text-white/80">
+          Un tarif transparent. Conçu pour booster votre ticket moyen.
+        </p>
+      </div>
     </div>
   </section>
 
   <!-- ═══════════════ MÉTHODE — 4 ÉTAPES ═══════════════ -->
-  <section id="methode" class="section-grid col-4">
-    <div class="grid-header">
-      <h2>De zéro à <span class="accent">opérationnel</span>. 4 étapes.</h2>
+  <section id="methode" class="border-b border-border bg-bg">
+    <div class="py-20 px-12 lg:py-32 lg:px-24 bg-surface border-b border-border reveal-up">
+      <h2 class="text-[clamp(48px,6vw,84px)] leading-[0.85] text-text uppercase italic font-black tracking-tighter">
+        DE ZÉRO À<br>OPÉRATIONNEL.<br><span class="text-orange">4 ÉTAPES.</span>
+      </h2>
     </div>
-    <div class="bento-box no-bottom-border">
-      <div class="roi-num" style="margin-bottom: 20px;">01</div>
-      <h3>On échange</h3>
-      <p>30 minutes pour comprendre votre activité et paramétrer la bonne configuration.</p>
-    </div>
-    <div class="bento-box no-bottom-border">
-      <div class="roi-num" style="margin-bottom: 20px;">02</div>
-      <h3>On configure</h3>
-      <p>Votre menu, vos couleurs, vos offres. On intègre tout selon votre image.</p>
-    </div>
-    <div class="bento-box no-bottom-border">
-      <div class="roi-num" style="margin-bottom: 20px;">03</div>
-      <h3>On installe</h3>
-      <p>Livraison, mise en place sur site. Formation de votre équipe incluse.</p>
-    </div>
-    <div class="bento-box no-right-border no-bottom-border">
-      <div class="roi-num" style="margin-bottom: 20px;">04</div>
-      <h3>Vous encaissez</h3>
-      <p>Votre borne tourne. Vos clients commandent en autonomie. Vous faites du chiffre.</p>
-    </div>
-  </section>
-
-  <!-- ═══════════════ ROI BANNER ═══════════════ -->
-  <section class="roi-banner">
-    <div class="roi-item">
-      <div class="roi-num">+30%</div>
-      <div class="roi-label">de ticket moyen</div>
-    </div>
-    <div class="roi-item">
-      <div class="roi-num">72H</div>
-      <div class="roi-label">mise en place</div>
-    </div>
-    <div class="roi-item">
-      <div class="roi-num">+500</div>
-      <div class="roi-label">restaurants équipés</div>
-    </div>
-    <div class="roi-item">
-      <div class="roi-num">98%</div>
-      <div class="roi-label">satisfaction client</div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="group p-12 lg:p-16 bg-surface border-b lg:border-b-0 lg:border-r border-border relative overflow-hidden reveal-up delay-100">
+        <div class="font-black text-[clamp(80px,10vw,120px)] leading-[0.8] italic mb-8 text-black opacity-10 group-hover:text-orange group-hover:opacity-100 transition-all duration-300">1</div>
+        <h3 class="text-[24px] leading-none mb-6 uppercase font-black tracking-tighter text-text relative z-10">On échange</h3>
+        <p class="text-[16px] text-muted leading-relaxed font-medium relative z-10">30 minutes pour auditer votre activité et configurer.</p>
+      </div>
+      
+      <div class="group p-12 lg:p-16 bg-[#F5F5F7] border-b lg:border-b-0 lg:border-r border-border relative overflow-hidden reveal-up delay-200">
+        <div class="font-black text-[clamp(80px,10vw,120px)] leading-[0.8] italic mb-8 text-black opacity-10 group-hover:text-orange group-hover:opacity-100 transition-all duration-300">2</div>
+        <h3 class="text-[24px] leading-none mb-6 uppercase font-black tracking-tighter text-text relative z-10">On configure</h3>
+        <p class="text-[16px] text-muted leading-relaxed font-medium relative z-10">Votre menu, vos visuels, vos offres d'upsell.</p>
+      </div>
+      
+      <div class="group p-12 lg:p-16 bg-surface border-b lg:border-b-0 lg:border-r border-border relative overflow-hidden reveal-up delay-300">
+        <div class="font-black text-[clamp(80px,10vw,120px)] leading-[0.8] italic mb-8 text-black opacity-10 group-hover:text-orange group-hover:opacity-100 transition-all duration-300">3</div>
+        <h3 class="text-[24px] leading-none mb-6 uppercase font-black tracking-tighter text-text relative z-10">On installe</h3>
+        <p class="text-[16px] text-muted leading-relaxed font-medium relative z-10">Mise en place sur site et formation expresse.</p>
+      </div>
+      
+      <!-- Inversion finale -->
+      <div class="group p-12 lg:p-16 bg-black relative overflow-hidden reveal-up delay-400">
+        <div class="font-black text-[clamp(80px,10vw,120px)] leading-[0.8] italic mb-8 text-white opacity-20 group-hover:text-orange group-hover:opacity-100 transition-all duration-300">4</div>
+        <h3 class="text-[24px] leading-none mb-6 uppercase font-black tracking-tighter text-white relative z-10">Vous encaissez</h3>
+        <p class="text-[16px] text-white/70 leading-relaxed font-medium relative z-10">La borne tourne. Les clients sont autonomes.</p>
+      </div>
     </div>
   </section>
 
-  <!-- ═══════════════ CTA FINAL ═══════════════ -->
-  <section class="cta-section">
-    <h2>Prêt à <span class="accent-highlight">rusher</span> ?</h2>
-    <p>Votre borne encaisse dans 72h. Un humain vous accompagne. Zéro risque.</p>
-    <div class="cta-buttons">
-      <a href="#" class="btn-primary">Prendre RDV →</a>
-      <a href="#" class="btn-ghost">Demander une démo</a>
+  <!-- ═══════════════ ROI BANNER (Data Brute en Orange) ═══════════════ -->
+  <section class="bg-black border-b border-border">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="p-12 lg:p-16 border-b sm:border-b-0 sm:border-r border-white/20 hover:bg-white/5 transition-colors duration-300 reveal-up delay-100">
+        <div class="font-black text-[clamp(64px,8vw,96px)] leading-[0.8] text-orange italic mb-6">+30%</div>
+        <div class="text-[12px] uppercase font-bold tracking-[0.3em] text-white/50">De ticket moyen</div>
+      </div>
+      <div class="p-12 lg:p-16 border-b sm:border-b-0 sm:border-r border-white/20 hover:bg-white/5 transition-colors duration-300 reveal-up delay-200">
+        <div class="font-black text-[clamp(64px,8vw,96px)] leading-[0.8] text-orange italic mb-6">72H</div>
+        <div class="text-[12px] uppercase font-bold tracking-[0.3em] text-white/50">Mise en place</div>
+      </div>
+      <div class="p-12 lg:p-16 border-b sm:border-b-0 sm:border-r border-white/20 hover:bg-white/5 transition-colors duration-300 reveal-up delay-300">
+        <div class="font-black text-[clamp(64px,8vw,96px)] leading-[0.8] text-orange italic mb-6">+500</div>
+        <div class="text-[12px] uppercase font-bold tracking-[0.3em] text-white/50">Restaurants équipés</div>
+      </div>
+      <div class="p-12 lg:p-16 hover:bg-white/5 transition-colors duration-300 reveal-up delay-400">
+        <div class="font-black text-[clamp(64px,8vw,96px)] leading-[0.8] text-orange italic mb-6">98%</div>
+        <div class="text-[12px] uppercase font-bold tracking-[0.3em] text-white/50">Satisfaction client</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ AVIS ═══════════════ -->
+  <section id="avis" class="border-b border-border bg-bg overflow-hidden">
+    <div class="py-20 px-12 lg:py-32 lg:px-24 bg-surface border-b border-border reveal-up">
+      <h2 class="text-[clamp(48px,6vw,84px)] leading-[0.85] text-text uppercase italic font-black tracking-tighter">
+        LA PREUVE PAR<br>LES <span class="text-orange">RÉSULTATS.</span>
+      </h2>
+      <p class="text-[18px] text-muted max-w-[540px] mt-8 font-medium leading-[1.5]">
+        Ce que disent les exploitants indépendants après 1 mois d'utilisation.
+      </p>
+    </div>
+    
+    <!-- Slider -->
+    <div class="bg-[#F5F5F7] py-24 flex overflow-hidden whitespace-nowrap group reveal-up delay-200">
+      <div class="animate-[marquee_30s_linear_infinite] flex gap-12 px-6 group-hover:[animation-play-state:paused]">
+        
+        <article class="bg-surface p-12 min-w-[460px] max-w-[460px] border border-border whitespace-normal flex flex-col justify-between hover:bg-black hover:text-white transition-colors duration-300 cursor-default">
+          <div>
+            <div class="text-[12px] font-black uppercase tracking-[0.4em] text-orange mb-8">Note: 5.0/5.0</div>
+            <p class="text-[20px] leading-[1.5] font-medium mb-12">"La borne a réduit l'attente et augmenté notre panier moyen de 30% en deux semaines. C'est implacable."</p>
+          </div>
+          <div class="flex items-center gap-6 pt-8 border-t border-border transition-colors duration-300">
+            <div class="w-16 h-16 bg-bg flex items-center justify-center text-[24px] font-black italic text-black">J</div>
+            <div>
+              <strong class="block text-[13px] uppercase font-black tracking-[0.2em]">Julie</strong>
+              <span class="block text-[11px] uppercase tracking-[0.1em] text-muted mt-2">Manager, Le P'tit Snack</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-surface p-12 min-w-[460px] max-w-[460px] border border-border whitespace-normal flex flex-col justify-between hover:bg-black hover:text-white transition-colors duration-300 cursor-default">
+          <div>
+            <div class="text-[12px] font-black uppercase tracking-[0.4em] text-orange mb-8">Note: 4.9/5.0</div>
+            <p class="text-[20px] leading-[1.5] font-medium mb-12">"Installation expresse, équipe réactive. L'impact sur notre service du midi est monumental."</p>
+          </div>
+          <div class="flex items-center gap-6 pt-8 border-t border-border transition-colors duration-300">
+            <div class="w-16 h-16 bg-bg flex items-center justify-center text-[24px] font-black italic text-black">S</div>
+            <div>
+              <strong class="block text-[13px] uppercase font-black tracking-[0.2em]">Samir</strong>
+              <span class="block text-[11px] uppercase tracking-[0.1em] text-muted mt-2">Gérant, Snack Central</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Duplicata pour boucle fluide -->
+        <article class="bg-surface p-12 min-w-[460px] max-w-[460px] border border-border whitespace-normal flex flex-col justify-between hover:bg-black hover:text-white transition-colors duration-300 cursor-default">
+          <div>
+            <div class="text-[12px] font-black uppercase tracking-[0.4em] text-orange mb-8">Note: 5.0/5.0</div>
+            <p class="text-[20px] leading-[1.5] font-medium mb-12">"La borne a réduit l'attente et augmenté notre panier moyen de 30% en deux semaines. C'est implacable."</p>
+          </div>
+          <div class="flex items-center gap-6 pt-8 border-t border-border transition-colors duration-300">
+            <div class="w-16 h-16 bg-bg flex items-center justify-center text-[24px] font-black italic text-black">J</div>
+            <div>
+              <strong class="block text-[13px] uppercase font-black tracking-[0.2em]">Julie</strong>
+              <span class="block text-[11px] uppercase tracking-[0.1em] text-muted mt-2">Manager, Le P'tit Snack</span>
+            </div>
+          </div>
+        </article>
+        <article class="bg-surface p-12 min-w-[460px] max-w-[460px] border border-border whitespace-normal flex flex-col justify-between hover:bg-black hover:text-white transition-colors duration-300 cursor-default">
+          <div>
+            <div class="text-[12px] font-black uppercase tracking-[0.4em] text-orange mb-8">Note: 5.0/5.0</div>
+            <p class="text-[20px] leading-[1.5] font-medium mb-12">"La borne a réduit l'attente et augmenté notre panier moyen de 30% en deux semaines. C'est implacable."</p>
+          </div>
+          <div class="flex items-center gap-6 pt-8 border-t border-border transition-colors duration-300">
+            <div class="w-16 h-16 bg-bg flex items-center justify-center text-[24px] font-black italic text-black">J</div>
+            <div>
+              <strong class="block text-[13px] uppercase font-black tracking-[0.2em]">Julie</strong>
+              <span class="block text-[11px] uppercase tracking-[0.1em] text-muted mt-2">Manager, Le P'tit Snack</span>
+            </div>
+          </div>
+        </article>
+        <article class="bg-surface p-12 min-w-[460px] max-w-[460px] border border-border whitespace-normal flex flex-col justify-between hover:bg-black hover:text-white transition-colors duration-300 cursor-default">
+          <div>
+            <div class="text-[12px] font-black uppercase tracking-[0.4em] text-orange mb-8">Note: 5.0/5.0</div>
+            <p class="text-[20px] leading-[1.5] font-medium mb-12">"La borne a réduit l'attente et augmenté notre panier moyen de 30% en deux semaines. C'est implacable."</p>
+          </div>
+          <div class="flex items-center gap-6 pt-8 border-t border-border transition-colors duration-300">
+            <div class="w-16 h-16 bg-bg flex items-center justify-center text-[24px] font-black italic text-black">J</div>
+            <div>
+              <strong class="block text-[13px] uppercase font-black tracking-[0.2em]">Julie</strong>
+              <span class="block text-[11px] uppercase tracking-[0.1em] text-muted mt-2">Manager, Le P'tit Snack</span>
+            </div>
+          </div>
+        </article>
+        <article class="bg-surface p-12 min-w-[460px] max-w-[460px] border border-border whitespace-normal flex flex-col justify-between hover:bg-black hover:text-white transition-colors duration-300 cursor-default">
+          <div>
+            <div class="text-[12px] font-black uppercase tracking-[0.4em] text-orange mb-8">Note: 5.0/5.0</div>
+            <p class="text-[20px] leading-[1.5] font-medium mb-12">"La borne a réduit l'attente et augmenté notre panier moyen de 30% en deux semaines. C'est implacable."</p>
+          </div>
+          <div class="flex items-center gap-6 pt-8 border-t border-border transition-colors duration-300">
+            <div class="w-16 h-16 bg-bg flex items-center justify-center text-[24px] font-black italic text-black">J</div>
+            <div>
+              <strong class="block text-[13px] uppercase font-black tracking-[0.2em]">Julie</strong>
+              <span class="block text-[11px] uppercase tracking-[0.1em] text-muted mt-2">Manager, Le P'tit Snack</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
     </div>
   </section>
 
   <!-- ═══════════════ FOOTER ═══════════════ -->
-  <footer>
-    <div class="footer-logo">
-      <div class="footer-logo-wrap">
-        <img src="./Rush-logo.svg" alt="RU$H" />
+  <footer class="bg-surface py-20 px-12 lg:px-24 flex flex-col lg:flex-row justify-between lg:items-end gap-16 lg:gap-0 border-t border-border">
+    <div class="flex flex-col gap-8">
+      <div class="w-[140px] relative">
+        <img src="./Rush-logo.svg" alt="RU$H" class="w-full h-auto invert-on-dark" />
       </div>
-      <div class="footer-powered">Powered by Bill-App</div>
+      <div class="text-[11px] font-bold text-muted uppercase tracking-[0.4em]">
+        Powered by Bill-App
+      </div>
     </div>
-    <div class="footer-links">
-      <a href="#">Légal</a>
-      <a href="#">CGU</a>
-      <a href="#">Contact</a>
+    
+    <div class="flex flex-col sm:flex-row gap-10 sm:gap-16">
+      <a href="#" class="text-text font-black text-[13px] uppercase tracking-[0.2em] hover:text-orange transition-colors duration-200">Légal</a>
+      <a href="#" class="text-text font-black text-[13px] uppercase tracking-[0.2em] hover:text-orange transition-colors duration-200">CGU</a>
+      <a href="#" class="text-text font-black text-[13px] uppercase tracking-[0.2em] hover:text-orange transition-colors duration-200">Contact</a>
     </div>
   </footer>
 
-  <!-- ═══════════════ SCRIPT ═══════════════ -->
+  <!-- ═══════════════ SCRIPTS ═══════════════ -->
   <script>
-    // THEME TOGGLE
+    // 1. Dark Mode
     const toggleBtn = document.getElementById('themeToggle');
     const htmlDoc = document.documentElement;
-
     toggleBtn.addEventListener('click', () => {
       const isDark = htmlDoc.getAttribute('data-theme') === 'dark';
-      if (isDark) {
-        htmlDoc.setAttribute('data-theme', 'light');
-        toggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
-      } else {
-        htmlDoc.setAttribute('data-theme', 'dark');
-        toggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
-      }
+      htmlDoc.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      toggleBtn.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
     });
 
-    // COMPTEURS ANIMÉS (INTERSECTION OBSERVER)
-    const counters = document.querySelectorAll('.counter');
-    const speed = 200; // Plus c'est bas, plus c'est rapide (vélocité RU$H)
+    // 2. Moteur d'Animation Brutaliste (Intersection Observer)
+    document.addEventListener("DOMContentLoaded", () => {
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.15 
+      };
+      
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target); // Déclenche l'animation une seule fois
+          }
+        });
+      }, observerOptions);
 
-    const animateCounters = (entries, observer) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const counter = entry.target;
-          const target = +counter.getAttribute('data-target');
-          
-          const updateCount = () => {
-            const count = +counter.innerText;
-            const inc = target / speed;
-
-            if (count < target) {
-              counter.innerText = Math.ceil(count + inc);
-              setTimeout(updateCount, 15);
-            } else {
-              counter.innerText = target;
-            }
-          };
-          updateCount();
-          observer.unobserve(counter); // Animer une seule fois
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(animateCounters, {
-      threshold: 0.5 // Se déclenche quand 50% de l'élément est visible
-    });
-
-    counters.forEach(counter => {
-      observer.observe(counter);
+      const revealElements = document.querySelectorAll('.reveal-up, .reveal-left');
+      revealElements.forEach(el => observer.observe(el));
     });
   </script>
-</body>
 
+  <!-- ═══════════════ CONTROL PANEL (STAGING) ═══════════════ -->
+  <button onclick="openCustomizer()" class="fixed top-1/2 right-0 -translate-y-1/2 z-[90] w-12 h-12 bg-black border-l border-y border-border text-white flex items-center justify-center hover:bg-orange transition-colors duration-200 cursor-pointer" aria-label="Ouvrir le panneau">
+    <i class="fa-solid fa-sliders"></i>
+  </button>
+  <div id="customizer-backdrop" class="fixed inset-0 bg-black/80 z-[95] hidden opacity-0 transition-opacity duration-200 backdrop-blur-sm" onclick="closeCustomizer()"></div>
+  <div id="customizer-panel" class="fixed top-0 right-0 h-full w-96 bg-surface transform translate-x-full transition-transform duration-200 z-[100] border-l border-border flex flex-col">
+    <div class="h-[80px] bg-black text-white flex justify-between items-center px-8 shrink-0">
+      <h3 class="text-[14px] font-black uppercase tracking-[0.2em] italic m-0">Panneau de contrôle</h3>
+      <button onclick="closeCustomizer()" class="text-white hover:text-orange bg-transparent border-none text-xl cursor-pointer transition-colors"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="flex-1 overflow-y-auto">
+      <div class="border-b border-border p-8 bg-bg hover:bg-surface transition-colors">
+        <label class="block text-[10px] font-bold uppercase tracking-[0.3em] mb-4 text-muted">Moteur Typographique</label>
+        <div class="grid grid-cols-2 gap-px bg-border border border-border">
+          <button onclick="setThemeVar('--app-font', '&quot;Futura PT&quot;, &quot;Jost&quot;, sans-serif')" class="bg-surface py-3 text-[12px] font-bold text-text hover:bg-black hover:text-white transition-colors">FUTURA</button>
+          <button onclick="setThemeVar('--app-font', '&quot;Inter&quot;, sans-serif')" class="bg-surface py-3 text-[12px] font-bold text-text hover:bg-black hover:text-white transition-colors">INTER</button>
+        </div>
+      </div>
+      <div class="border-b border-border p-8 bg-bg hover:bg-surface transition-colors">
+        <label class="block text-[10px] font-bold uppercase tracking-[0.3em] mb-4 text-muted">Border Radius</label>
+        <div class="grid grid-cols-3 gap-px bg-border border border-border">
+          <button onclick="setThemeVar('--app-radius', '0px')" class="bg-surface py-3 text-[12px] font-bold text-text hover:bg-black hover:text-white transition-colors">0 PX</button>
+          <button onclick="setThemeVar('--app-radius', '4px')" class="bg-surface py-3 text-[12px] font-bold text-text hover:bg-black hover:text-white transition-colors">4 PX</button>
+          <button onclick="setThemeVar('--app-radius', '8px')" class="bg-surface py-3 text-[12px] font-bold text-text hover:bg-black hover:text-white transition-colors">8 PX</button>
+        </div>
+      </div>
+      <div class="border-b border-border p-8 bg-bg hover:bg-surface transition-colors">
+        <label class="block text-[10px] font-bold uppercase tracking-[0.3em] mb-4 text-muted">Couleur d'Action</label>
+        <div class="flex gap-4">
+          <button onclick="setThemeVar('--orange', '#FF3D00')" class="w-10 h-10 bg-[#FF3D00] border border-border cursor-pointer hover:scale-110 transition-transform"></button>
+          <button onclick="setThemeVar('--orange', '#00E5FF')" class="w-10 h-10 bg-[#00E5FF] border border-border cursor-pointer hover:scale-110 transition-transform"></button>
+          <button onclick="setThemeVar('--orange', '#00FF00')" class="w-10 h-10 bg-[#00FF00] border border-border cursor-pointer hover:scale-110 transition-transform"></button>
+        </div>
+      </div>
+    </div>
+    <div class="p-8 border-t border-border bg-surface shrink-0">
+      <button onclick="resetTheme()" class="w-full py-4 bg-transparent border border-border text-text text-[11px] font-bold cursor-pointer transition-colors uppercase tracking-[0.2em] hover:bg-text hover:text-surface">
+        Reset Factory
+      </button>
+    </div>
+  </div>
+  <script>
+    const customizerPanel = document.getElementById('customizer-panel');
+    const customizerBackdrop = document.getElementById('customizer-backdrop');
+    const rootStyles = document.documentElement.style;
+    function openCustomizer() {
+      customizerPanel.classList.remove('translate-x-full');
+      customizerBackdrop.classList.remove('hidden');
+      setTimeout(() => { customizerBackdrop.classList.remove('opacity-0'); }, 10);
+    }
+    function closeCustomizer() {
+      customizerPanel.classList.add('translate-x-full');
+      customizerBackdrop.classList.add('opacity-0');
+      setTimeout(() => { customizerBackdrop.classList.add('hidden'); }, 200);
+    }
+    function setThemeVar(variable, value) { rootStyles.setProperty(variable, value); }
+    function resetTheme() {
+      rootStyles.removeProperty('--app-font');
+      rootStyles.removeProperty('--app-radius');
+      rootStyles.removeProperty('--orange');
+    }
+  </script>
+</body>
 </html>

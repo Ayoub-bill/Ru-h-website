@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RU$H — Borne de commande, Web App et Fidélité pour fast-foods indépendants. Opérationnel en 72h. Installation et formation incluses.">
+  <title>RU$H — La borne et la commande en ligne des fast-foods qui veulent envoyer plus vite</title>
+  
+  <!-- GOOGLE FONTS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ═══════════════════════════════════════════
+       RESET & BASE
+    ═══════════════════════════════════════════ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: #F9F9F9;
+      color: #1A1A1A;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    ul, ol {
+      list-style: none;
+    }
+
+    /* ═══════════════════════════════════════════
+       ANIMATIONS
+    ═══════════════════════════════════════════ */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideLeftToRight {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(46, 204, 113, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+    }
+
+    .fade-in {
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    /* ═══════════════════════════════════════════
+       NAVIGATION (STICKY)
+    ═══════════════════════════════════════════ */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background-color: #FFFFFF;
+      border-bottom: 1px solid #E5E5E5;
+      padding: 0 40px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    .nav-logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: #FF3D00;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-logo::after {
+      content: '$';
+      color: #FF3D00;
+      font-style: italic;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #1A1A1A;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: #FF3D00;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #FFFFFF;
+      background-color: #FF3D00;
+      border: 1px solid #FF3D00;
+      border-radius: 8px;
+      padding: 12px 28px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255, 61, 0, 0.3);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 0 20px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .nav-logo {
+        font-size: 20px;
+      }
+    }
+
+    /* ═══════════════════════════════════════════
+       HERO SECTION
+    ═══════════════════════════════════════════ */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      background-color: #FFFFFF;
+      border-bottom: 1px solid #E5E5E5;
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 100px 60px;
+      background-color: #FFFFFF;
+    }
+
+    .hero h1 {
+      font-size: clamp(42px, 5vw, 56px);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 24px;
+      color: #1A1A1A;
+      letter-spacing: -0.5px;
+    }
+
+    .hero h1 .accent {
+      color: #FF3D00;
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      font-weight: 500;
+      color: #666666;
+      line-height: 1.7;
+      margin-bottom: 40px;
+      max-width: 540px;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .hero-cta .btn-primary {
+      padding: 14px 32px;
+      font-size: 15px;
+    }
+
+    .hero-visual {
+      background-color: #F9F9F9;
+      min-height: 520px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @media (max-width: 1024px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-visual {
+        min-height: 400px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-content {
+        padding: 60px 24px;
+      }
+
+      .hero h1 {
+        font-size: 36px;
+      }
+
+      .hero-visual {
+        min-height: 300px;
+      }
+    }
+
+    /* ═══════════════════════════════════════════
+       BUNDLE SECTION (BENTO GRID)
+    ═══════════════════════════════════════════ */
+    .bundle-section {
+      background-color: #FFFFFF;
+      padding: 100px 60px;
+      border-bottom: 1px solid #E5E5E5;
+    }
+
+    .section-header {
+      margin-bottom: 60px;
+    }
+
+    .section-header h2 {
+      font-size: clamp(36px, 4vw, 48px);
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: #1A1A1A;
+      line-height: 1.2;
+      letter-spacing: -0.3px;
+    }
+
+    .section-header h2 .accent {
+      color: #FF3D00;
+    }
+
+    .section-header p {
+      font-size: 18px;
+      color: #666666;
+      font-weight: 500;
+      max-width: 560px;
+    }
+
+    .bundle-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .bundle-card {
+      background-color: #FFFFFF;
+      border: 1px solid #E5E5E5;
+      border-radius: 16px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .bundle-card:hover {
+      border-color: #FF3D00;
+      box-shadow: 0 8px 24px rgba(255, 61, 0, 0.08);
+      transform: translateY(-4px);
+    }
+
+    .bundle-card-number {
+      font-size: 48px;
+      font-weight: 800;
+      color: #FF3D00;
+      font-style: italic;
+    }
+
+    .bundle-card h3 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1A1A1A;
+    }
+
+    .bundle-card p {
+      font-size: 16px;
+      color: #666666;
+      line-height: 1.6;
+      flex-grow: 1;
+    }
+
+    @media (max-width: 1024px) {
+      .bundle-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .bundle-section {
+        padding: 60px 24px;
+      }
+
+      .bundle-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bundle-card {
+        padding: 32px 24px;
+      }
+    }
+
+    /* ═══════════════════════════════════════════
+       REVIEWS SECTION (CAROUSEL)
+    ═══════════════════════════════════════════ */
+    .reviews-section {
+      background-color: #F9F9F9;
+      padding: 100px 60px;
+      border-bottom: 1px solid #E5E5E5;
+    }
+
+    .reviews-carousel {
+      overflow: hidden;
+      margin-top: 50px;
+    }
+
+    .reviews-track {
+      display: flex;
+      gap: 24px;
+      animation: slideLeftToRight 45s linear infinite;
+      width: fit-content;
+    }
+
+    .reviews-track:hover {
+      animation-play-state: paused;
+    }
+
+    .review-card {
+      background-color: #FFFFFF;
+      border: 1px solid #E5E5E5;
+      border-radius: 12px;
+      padding: 24px;
+      min-width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .review-header {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .review-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      background-color: #E5E5E5;
+    }
+
+    .review-meta h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1A1A1A;
+      margin-bottom: 4px;
+    }
+
+    .review-meta p {
+      font-size: 12px;
+      color: #666666;
+      font-weight: 500;
+    }
+
+    .stars {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .stars i {
+      color: #FFD700;
+      font-size: 14px;
+    }
+
+    .review-text {
+      font-size: 15px;
+      color: #1A1A1A;
+      font-weight: 500;
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      .reviews-section {
+        padding: 60px 24px;
+      }
+
+      .review-card {
+        min-width: 280px;
+      }
+    }
+
+    /* ═══════════════════════════════════════════
+       PRICING SECTION
+    ═══════════════════════════════════════════ */
+    .pricing-section {
+      background-color: #FFFFFF;
+      padding: 100px 60px;
+      border-bottom: 1px solid #E5E5E5;
+    }
+
+    .pricing-container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .pricing-card {
+      background-color: #FFFFFF;
+      border: 2px solid #FF3D00;
+      border-radius: 16px;
+      padding: 48px 40px;
+      text-align: center;
+      box-shadow: 0 12px 32px rgba(255, 61, 0, 0.08);
+    }
+
+    .pricing-card h3 {
+      font-size: 28px;
+      font-weight: 800;
+      color: #1A1A1A;
+      margin-bottom: 16px;
+    }
+
+    .pricing-card p {
+      font-size: 16px;
+      color: #666666;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .pricing-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 40px;
+      text-align: left;
+    }
+
+    .pricing-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+      color: #1A1A1A;
+      font-weight: 600;
+    }
+
+    .pricing-list li i {
+      color: #2ECC71;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .pricing-card .btn-primary {
+      padding: 14px 40px;
+      font-size: 15px;
+    }
+
+    @media (max-width: 640px) {
+      .pricing-section {
+        padding: 60px 24px;
+      }
+
+      .pricing-card {
+        padding: 32px 24px;
+      }
+
+      .pricing-card h3 {
+        font-size: 24px;
+      }
+    }
+
+    /* ═══════════════════════════════════════════
+       CONTACT SECTION
+    ═══════════════════════════════════════════ */
+    .contact-section {
+      background-color: #F9F9F9;
+      padding: 100px 60px;
+      border-bottom: 1px solid #E5E5E5;
+    }
+
+    .contact-container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .contact-form {
+      background-color: #FFFFFF;
+      border: 1px solid #E5E5E5;
+      border-radius: 12px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: #1A1A1A;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      padding: 12px 16px;
+      border: 1px solid #CCC;
+      border-radius: 8px;
+      color: #1A1A1A;
+      background-color: #FFFFFF;
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #FF3D00;
+      box-shadow: 0 0 0 3px rgba(255, 61, 0, 0.1);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .form-actions .btn-primary {
+      padding: 12px 32px;
+    }
+
+    .online-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1A1A1A;
+    }
+
+    .online-dot {
+      width: 12px;
+      height: 12px;
+      background-color: #2ECC71;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 640px) {
+      .contact-section {
+        padding: 60px 24px;
+      }
+
+      .contact-form {
+        padding: 24px;
+      }
+
+      .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .form-actions .btn-primary {
+        width: 100%;
+      }
+
+      .online-status {
+        justify-content: center;
+        text-align: center;
+      }
+    }
+
+    /* ═══════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════ */
+    footer {
+      background-color: #1A1A1A;
+      color: #FFFFFF;
+      padding: 48px 60px;
+      border-top: 1px solid #E5E5E5;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .footer-logo {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+
+    .footer-powered {
+      font-size: 12px;
+      font-weight: 600;
+      color: #999999;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: #FFFFFF;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: #FF3D00;
+    }
+
+    @media (max-width: 768px) {
+      footer {
+        padding: 40px 24px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .footer-links {
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+    }
+
+    /* ═══════════════════════════════════════════
+       UTILITIES
+    ═══════════════════════════════════════════ */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ═══════════════════════════════════════════
+       NAVIGATION
+    ═══════════════════════════════════════════ -->
+  <nav>
+    <div class="nav-logo">RU</div>
+    <div class="nav-links">
+      <a href="#bundle">Le Bundle</a>
+      <a href="#avis">Avis</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <button class="btn-primary">Acheter</button>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       HERO SECTION
+    ═══════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>La borne et la commande en ligne des fast-foods qui veulent envoyer plus <span class="accent">vite.</span></h1>
+      <p class="hero-subtitle">Votre borne tourne en 72h. Vos clients commandent seuls. Vous encaissez. Installation et formation incluses.</p>
+      <div class="hero-cta">
+        <a href="#bundle" class="btn-primary">Découvrir le Bundle</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="https://via.placeholder.com/600x520/F9F9F9/E5E5E5?text=Borne+RU%24H" alt="Borne de commande RU$H en action">
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       BUNDLE SECTION
+    ═══════════════════════════════════════════ -->
+  <section id="bundle" class="bundle-section">
+    <div class="section-header">
+      <h2>Le <span class="accent">Bundle</span> complet</h2>
+      <p>Tout ce qu'il faut pour réduire l'attente, augmenter le ticket moyen et fidéliser.</p>
+    </div>
+    
+    <div class="bundle-grid">
+      <div class="bundle-card">
+        <div class="bundle-card-number">01</div>
+        <h3>Borne de commande</h3>
+        <p>Vos clients commandent seuls, plus vite, et dépensent plus grâce à l'upsell automatique. La file d'attente disparaît.</p>
+      </div>
+      <div class="bundle-card">
+        <div class="bundle-card-number">02</div>
+        <h3>Web App</h3>
+        <p>Click & Collect, QR Code table, commande à distance. Zéro téléchargement. Le client est autonome en 10 secondes.</p>
+      </div>
+      <div class="bundle-card">
+        <div class="bundle-card-number">03</div>
+        <h3>Fidélité</h3>
+        <p>Points, récompenses automatiques. Faites revenir vos clients sans lever le petit doigt. La data vous appartient.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       REVIEWS SECTION
+    ═══════════════════════════════════════════ -->
+  <section id="avis" class="reviews-section">
+    <div class="section-header">
+      <h2>Ce que disent les <span class="accent">managers</span></h2>
+      <p>Les fast-foods indépendants nous font confiance pour leur transformation digitale.</p>
+    </div>
+
+    <div class="reviews-carousel">
+      <div class="reviews-track">
+        <article class="review-card">
+          <div class="review-header">
+            <img src="https://via.placeholder.com/56x56/FF3D00/FFFFFF?text=JD" alt="Julie Dubois" class="review-avatar">
+            <div class="review-meta">
+              <h4>Julie Dubois</h4>
+              <p>Le P'tit Snack, Paris</p>
+              <div class="stars">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+          </div>
+          <p class="review-text">"La borne a réduit l'attente et augmenté notre panier moyen en 2 semaines. Résultats visibles immédiatement."</p>
+        </article>
+
+        <article class="review-card">
+          <div class="review-header">
+            <img src="https://via.placeholder.com/56x56/FF3D00/FFFFFF?text=SM" alt="Samir Mohamed" class="review-avatar">
+            <div class="review-meta">
+              <h4>Samir Mohamed</h4>
+              <p>Snack Central, Lyon</p>
+              <div class="stars">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+          </div>
+          <p class="review-text">"Installation rapide, équipe réactive, formation complète. On voit déjà l'impact sur notre service et les clients adorent."</p>
+        </article>
+
+        <article class="review-card">
+          <div class="review-header">
+            <img src="https://via.placeholder.com/56x56/FF3D00/FFFFFF?text=CR" alt="Claire Rousseau" class="review-avatar">
+            <div class="review-meta">
+              <h4>Claire Rousseau</h4>
+              <p>Burger Minute, Marseille</p>
+              <div class="stars">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+          </div>
+          <p class="review-text">"Support humain et formation incluses — indispensable pour une petite enseigne. Équipe ultra réactive et disponible."</p>
+        </article>
+
+        <!-- Duplication pour l'animation infinie -->
+        <article class="review-card">
+          <div class="review-header">
+            <img src="https://via.placeholder.com/56x56/FF3D00/FFFFFF?text=JD" alt="Julie Dubois" class="review-avatar">
+            <div class="review-meta">
+              <h4>Julie Dubois</h4>
+              <p>Le P'tit Snack, Paris</p>
+              <div class="stars">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+          </div>
+          <p class="review-text">"La borne a réduit l'attente et augmenté notre panier moyen en 2 semaines. Résultats visibles immédiatement."</p>
+        </article>
+
+        <article class="review-card">
+          <div class="review-header">
+            <img src="https://via.placeholder.com/56x56/FF3D00/FFFFFF?text=SM" alt="Samir Mohamed" class="review-avatar">
+            <div class="review-meta">
+              <h4>Samir Mohamed</h4>
+              <p>Snack Central, Lyon</p>
+              <div class="stars">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+          </div>
+          <p class="review-text">"Installation rapide, équipe réactive, formation complète. On voit déjà l'impact sur notre service et les clients adorent."</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       PRICING SECTION
+    ═══════════════════════════════════════════ -->
+  <section id="pricing" class="pricing-section">
+    <div class="pricing-container">
+      <div class="section-header" style="text-align: center; margin-bottom: 40px;">
+        <h2>Tarification <span class="accent">transparente</span></h2>
+        <p>Un prix, un engagement, aucune surprise.</p>
+      </div>
+
+      <div class="pricing-card">
+        <h3>RU$H — Pack Standard</h3>
+        <p>Tout ce dont un fast-food indépendant a besoin pour transformer sa vente.</p>
+        
+        <ul class="pricing-list">
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Borne de commande opérationnelle en 72h</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Web App et commande en ligne</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Système de fidélité intégré</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Installation et formation incluses</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Support humain prioritaire</span>
+          </li>
+        </ul>
+
+        <a href="#contact" class="btn-primary">Acheter maintenant</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       CONTACT SECTION
+    ═══════════════════════════════════════════ -->
+  <section id="contact" class="contact-section">
+    <div class="contact-container">
+      <div class="section-header" style="text-align: center; margin-bottom: 0;">
+        <h2>Commençons <span class="accent">maintenant</span></h2>
+        <p>Remplissez le formulaire. On vous contacte dans les 24h.</p>
+      </div>
+
+      <form class="contact-form" action="#" method="POST">
+        <div class="form-group">
+          <label for="name">Nom du restaurant *</label>
+          <input type="text" id="name" name="name" placeholder="Ex: Le Snack de Marseille" required>
+        </div>
+
+        <div class="form-group">
+          <label for="contact-name">Votre nom *</label>
+          <input type="text" id="contact-name" name="contact_name" placeholder="Ex: Jean Dupont" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" id="email" name="email" placeholder="Ex: contact@snack.fr" required>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Téléphone</label>
+          <input type="tel" id="phone" name="phone" placeholder="Ex: 06 12 34 56 78">
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message (optionnel)</label>
+          <textarea id="message" name="message" rows="4" placeholder="Dites-nous comment vous envisagez cette transformation..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Envoyer la demande</button>
+          <div class="online-status">
+            <span class="online-dot"></span>
+            <span>Support en ligne : 01 84 60 20 20</span>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-logo">RU$H</div>
+      <div style="flex: 1; text-align: center;">
+        <p class="footer-powered">Powered by Bill-App — Infrastructure de paiement pour fast-foods</p>
+      </div>
+      <div class="footer-links">
+        <a href="#">Légal</a>
+        <a href="#">CGU</a>
+        <a href="#">Confidentialité</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════
+       JAVASCRIPT
+    ═══════════════════════════════════════════ -->
+  <script>
+    // ═══════════════════════════════════════════
+    // INTERSECTION OBSERVER — FADE-IN ANIMATIONS
+    // ═══════════════════════════════════════════
+    const observerOptions = {
+      threshold: 0.15,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // Observer toutes les sections et titres H2
+    document.querySelectorAll('h2, .section-header, .bundle-card, .review-card, .pricing-card, .contact-form').forEach(el => {
+      observer.observe(el);
+    });
+
+    // ═══════════════════════════════════════════
+    // SMOOTH SCROLL POUR LES ANCRES
+    // ═══════════════════════════════════════════
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href !== '#' && document.querySelector(href)) {
+          e.preventDefault();
+          document.querySelector(href).scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // ═══════════════════════════════════════════
+    // FORM SUBMISSION HANDLER
+    // ═══════════════════════════════════════════
+    const form = document.querySelector('.contact-form');
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Récupérer les données du formulaire
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+
+        // Logger les données (à remplacer par un vrai backend)
+        console.log('Formulaire soumis:', data);
+
+        // Réinitialiser le formulaire
+        form.reset();
+
+        // Afficher un message de confirmation
+        alert('✓ Merci ! On vous contacte dans les 24h.');
+      });
+    }
+
+    // ═══════════════════════════════════════════
+    // ADJUST NAV ON SCROLL
+    // ═══════════════════════════════════════════
+    let lastScroll = 0;
+    const nav = document.querySelector('nav');
+
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.pageYOffset;
+      
+      if (currentScroll > 100) {
+        nav.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04)';
+      } else {
+        nav.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.02)';
+      }
+      
+      lastScroll = currentScroll;
+    });
+  </script>
+</body>
+</html>
