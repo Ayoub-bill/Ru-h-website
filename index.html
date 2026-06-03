@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RU$H — Borne de commande, Web App et Fidélité pour fast-foods indépendants. Opérationnel en 72h.">
+  <title>RU$H — Encaissez plus. Plus vite. Sans friction.</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: ['class', '[data-theme="dark"]'],
+      theme: {
+        extend: {
+          colors: {
+            orange: 'var(--orange)',
+            'orange-hover': 'var(--orange-hover)',
+            bg: 'var(--bg)',
+            surface: 'var(--surface)',
+            text: 'var(--text)',
+            border: 'var(--border)',
+            muted: 'var(--muted)',
+          },
+          fontFamily: {
+            sans: ['"Futura PT"', '"Jost"', 'sans-serif'],
+          },
+          animation: {
+            'marquee': 'marquee 15s linear infinite',
+          },
+          keyframes: {
+            marquee: {
+              '0%': { transform: 'translateX(0%)' },
+              '100%': { transform: 'translateX(-100%)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,400;0,500;0,700;0,900;1,700;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style type="text/tailwindcss">
+    @layer base {
+      :root {
+        --orange: #FF3D00;
+        --orange-hover: #D63300;
+        --bg: #F9F9F9;
+        --surface: #FFFFFF;
+        --text: #1A1A1A;
+        --border: #000000;
+        --muted: #666666;
+      }
+      [data-theme="dark"] {
+        --bg: #0A0A0A;
+        --surface: #141414;
+        --text: #FFFFFF;
+        --border: #333333;
+        --muted: #999999;
+      }
+      
+      body {
+        @apply bg-bg text-text font-sans antialiased selection:bg-orange selection:text-white;
+      }
+
+      h1, h2, h3, .impact-text {
+        @apply uppercase italic font-black tracking-tighter leading-none;
+      }
+      
+      [data-theme="dark"] .invert-on-dark {
+        filter: brightness(0) invert(1);
+      }
+    }
+    
+    /* Utilitaires Scrollbars */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Moteur d'animations Brutalistes (Agency Grade) */
+    .reveal-up {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.5s ease-out, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: opacity 0.5s ease-out, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .is-visible {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+    .delay-100 { transition-delay: 100ms; }
+    .delay-200 { transition-delay: 200ms; }
+    .delay-300 { transition-delay: 300ms; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════ BANNER URGENCY ═══════════════ -->
+  <div class="bg-black border-b border-border flex overflow-hidden no-scrollbar whitespace-nowrap py-3">
+    <div class="animate-marquee flex items-center gap-10 text-[11px] font-bold uppercase tracking-[0.2em] text-white">
+      <span>🎯 OFFRE DE LANCEMENT — <span class="text-orange">1ER MOIS OFFERT</span> AVANT LE 31 JUILLET</span>
+      <span>🎯 OFFRE DE LANCEMENT — <span class="text-orange">1ER MOIS OFFERT</span> AVANT LE 31 JUILLET</span>
+      <span>🎯 OFFRE DE LANCEMENT — <span class="text-orange">1ER MOIS OFFERT</span> AVANT LE 31 JUILLET</span>
+      <span>🎯 OFFRE DE LANCEMENT — <span class="text-orange">1ER MOIS OFFERT</span> AVANT LE 31 JUILLET</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════ NAV ═══════════════ -->
+  <nav class="sticky top-0 z-50 bg-surface h-[80px] flex items-center justify-between border-b border-border transition-colors duration-200">
+    <a class="flex items-center justify-center h-full w-[160px] border-r border-border" href="#" aria-label="RU$H — Accueil">
+      <img src="./Rush-logo.svg" alt="RU$H" class="h-[90px] w-auto invert-on-dark" />
+    </a>
+    
+    <ul class="hidden sm:flex h-full">
+      <li class="h-full"><a href="#produits" class="flex items-center h-full px-8 text-[12px] font-bold uppercase tracking-[0.2em] border-l border-border hover:bg-text hover:text-surface transition-colors duration-200">Le Bundle</a></li>
+      <li class="h-full"><a href="#avis" class="flex items-center h-full px-8 text-[12px] font-bold uppercase tracking-[0.2em] border-l border-border hover:bg-text hover:text-surface transition-colors duration-200">Avis</a></li>
+    </ul>
+    
+    <div class="flex h-full">
+      <button class="w-[80px] h-full flex items-center justify-center border-l border-border text-text hover:bg-text hover:text-surface transition-colors duration-200" id="themeToggle">
+        <i class="fa-solid fa-sun"></i>
+      </button>
+      <a href="#contact" class="flex items-center justify-center h-full px-10 text-[13px] font-black uppercase tracking-[0.15em] text-white bg-orange hover:bg-orange-hover transition-colors duration-200">
+        Acheter
+      </a>
+    </div>
+  </nav>
+
+  <!-- ═══════════════ HERO ═══════════════ -->
+  <section class="border-b border-border bg-bg">
+    <div class="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] min-h-[85vh]">
+      
+      <!-- ▌MODULE A -->
+      <div class="bg-surface p-12 lg:p-24 flex flex-col justify-end border-b lg:border-b-0 lg:border-r border-border reveal-left">
+        <div class="text-[12px] font-bold uppercase tracking-[0.3em] text-muted mb-12 flex items-center gap-4">
+          <span class="w-8 h-[1px] bg-border"></span> Borne · Web App · Fidélité
+        </div>
+        <!-- SCALPEL ORANGE : On frappe sur l'argent -->
+        <h1 class="text-[clamp(64px,8vw,120px)] leading-[0.85] mb-10 text-text">
+          ENCAISSEZ<br>PLUS VITE.<br>FAITES DU<br><span class="text-orange">CHIFFRE.</span>
+        </h1>
+        <p class="text-[18px] text-muted font-medium mb-12 max-w-[440px] leading-[1.5]">
+          Votre borne tourne en <span class="text-orange font-bold">72h</span>. Vos clients commandent seuls. Vous encaissez. C'est tout.
+        </p>
+        <div class="flex">
+          <a href="#contact" class="inline-flex items-center gap-4 text-[14px] font-black uppercase tracking-[0.15em] text-white bg-orange px-12 py-5 hover:bg-orange-hover transition-colors duration-200">
+            Prendre RDV <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- ▌MODULE B + C + D -->
+      <div class="grid grid-rows-[1.5fr_1fr]">
+
+        <!-- ▌MODULE B -->
+        <div class="bg-[#F5F5F7] border-b border-border relative flex items-center justify-center overflow-hidden group reveal-up delay-100">
+          <div class="absolute top-8 left-8 text-[11px] font-bold uppercase tracking-[0.3em] z-10">
+            <span class="text-[10px] text-black bg-white px-3 py-1 font-black">01 — BORNE</span>
+          </div>
+          <img src="./modules/borne.jpg" alt="Interface borne de commande" class="h-full w-auto object-cover transition-transform duration-700 group-hover:scale-105" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-[1fr_1fr]">
+
+          <!-- ▌MODULE C -->
+          <div class="bg-surface border-b sm:border-b-0 sm:border-r border-border relative flex items-center justify-center group overflow-hidden reveal-up delay-200">
+            <div class="absolute top-6 left-6 text-[10px] font-bold uppercase tracking-[0.3em] z-10">
+              <span class="text-[10px] text-black bg-white px-3 py-1 font-black">02 — WEB APP</span>
+            </div>
+            <img src="./modules/webapp.jpg" alt="Borne" class="h-full w-auto object-cover transition-transform duration-700 group-hover:scale-105" />
+          </div>
+
+          <!-- ▌MODULE D (Avec Icône Rocket et KPI Orange) -->
+          <div class="bg-black relative overflow-hidden flex flex-col justify-end p-8 lg:p-12 group cursor-default reveal-up delay-300">
+            <img src="./modules/webapp.jpg" alt="Web app" class="absolute inset-0 w-full h-full object-cover opacity-40 grayscale mix-blend-overlay transition-transform duration-700 group-hover:scale-105" />
+            
+            <div class="relative z-10 flex flex-col items-start">
+              
+              <!-- Rocket Icon -->
+              <div class="text-orange mb-4 transition-transform duration-500 group-hover:-translate-y-3 group-hover:translate-x-3">
+                <svg height="80px" width="80px" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+                  <path d="m256,79.2c-5.8,0-10.4,4.7-10.4,10.4v14.4c0,5.8 4.7,10.4 10.4,10.4s10.4-4.7 10.4-10.4v-14.4c0-5.8-4.6-10.4-10.4-10.4z"/>
+                  <path d="m335.3,204.8l12.2-69.3c8.6-49.1-24.8-96.5-87.3-123.8-2.7-1.2-5.7-1.2-8.3,0-62.5,27.2-95.9,74.6-87.3,123.8l12.2,69.3c-62.2,19.6-101.8,60.7-101.8,106.5 0,29.5 16.7,57.5 46.6,79.4 5.2,3.8 10.1,1.4 11.8,0.3 3.6-2.4 5.4-6.7 4.5-10.9-0.7-3.4-11.9-43.2 57.3-70.1l1,5.9c3.7,21.2 28.9,36.6 59.8,36.6 30.9,0 56-15.4 59.8-36.6l1-5.9c69.9,28.1 58,66.7 57.3,70-0.9,4.2 0.9,8.6 4.5,10.9 5,3.2 10,1 11.8-0.3 30.1-21.7 46.6-49.9 46.6-79.4-5.68434e-14-45.7-39.6-86.8-101.7-106.4zm-218.1,154.5c-13.9-14.7-21.3-31.2-21.3-48.1 0-35.8 32.8-68.7 84.5-85.8l11.2,63.7c-40.9,14-68.6,40.2-74.4,70.2zm178-47c-1.6,9.3-17.1,19.4-39.2,19.4-22.1,0-37.6-10.1-39.2-19.4l-31.7-180.4c-6.7-38.1 20.4-75.8 70.9-99.2 50.5,23.3 77.6,61 70.9,99.2l-31.7,180.4zm99.6,47.1c-5.9-30-33.5-56.3-74.4-70.1l11.2-63.7c51.7,17 84.5,49.9 84.5,85.8 0.1,16.7-7.4,33.3-21.3,48z"/>
+                  <path d="m315.8,379.5c-5.8,0-10.4,4.7-10.4,10.4v63.3c0,5.8 4.7,10.4 10.4,10.4 5.8,0 10.4-4.7 10.4-10.4v-63.3c0-5.8-4.6-10.4-10.4-10.4z"/>
+                  <path d="m256,379.5c-5.8,0-10.4,4.7-10.4,10.4v100.7c0,5.8 4.7,10.4 10.4,10.4s10.4-4.7 10.4-10.4v-100.7c0-5.8-4.6-10.4-10.4-10.4z"/>
+                  <path d="m196.2,379.5c-5.8,0-10.4,4.7-10.4,10.4v63.3c0,5.8 4.7,10.4 10.4,10.4s10.4-4.7 10.4-10.4v-63.3c0-5.8-4.6-10.4-10.4-10.4z"/>
+                </svg>
+              </div>
+              
+              <div class="text-[clamp(56px,6vw,84px)] font-black italic leading-[0.8] text-orange mb-6 transition-transform duration-300 group-hover:translate-x-2">
+                +30%
+              </div>
+              
+              <div class="text-[12px] font-bold uppercase tracking-[0.3em] text-white/80">
+                De ticket moyen<br>dès le 1er mois
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ LOGOS CLIENTS ═══════════════ -->
+  <div class="py-12 px-12 bg-bg text-center border-b border-border flex flex-col md:flex-row items-center justify-between gap-8 reveal-up">
+    <p class="text-[11px] font-bold uppercase text-muted tracking-[0.3em] shrink-0">Ils font confiance à RU$H</p>
+    <div class="flex justify-center md:justify-end items-center gap-12 flex-wrap flex-1 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+      <img src="./clients/burger-king.png" alt="Burger King" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./clients/burger's.png" alt="Burger's" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./clients/GOMU.png" alt="GOMU" class="h-6 w-auto object-contain invert-on-dark" />
+       <img src="./clients/burger-king.png" alt="Burger King" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./clients/burger's.png" alt="Burger's" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./clients/GOMU.png" alt="GOMU" class="h-6 w-auto object-contain invert-on-dark" />
+       <img src="./clients/burger-king.png" alt="Burger King" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./clients/burger's.png" alt="Burger's" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./clients/GOMU.png" alt="GOMU" class="h-6 w-auto object-contain invert-on-dark" />
+       <img src="./clients/burger-king.png" alt="Burger King" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./clients/burger's.png" alt="Burger's" class="h-6 w-auto object-contain invert-on-dark" />
+      <img src="./clients/GOMU.png" alt="GOMU" class="h-6 w-auto object-contain invert-on-dark" />
+    </div>
+  </div>
+
+  <!-- ═══════════════ LE BUNDLE ═══════════════ -->
+  <section id="produits" class="border-b border-border bg-bg">
+    
+    <div class="py-20 px-12 lg:py-32 lg:px-24 bg-surface border-b border-border reveal-up">
+      <!-- SCALPEL ORANGE : On isole l'objectif -->
+      <h2 class="text-[clamp(48px,6vw,84px)] leading-[0.85] text-text uppercase italic font-black tracking-tighter">
+        TROIS ARMES.<br>UN SEUL <span class="text-orange">OBJECTIF.</span>
+      </h2>
+      <p class="text-[18px] text-muted max-w-[540px] mt-8 font-medium leading-[1.5]">
+        Détruisez la file d'attente, automatisez vos ventes, fidélisez sans effort. L'essentiel de la performance, sans la complexité.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3">
+      
+      <!-- PRODUIT 01 -->
+      <div class="group relative p-12 lg:p-16 bg-surface border-b lg:border-b-0 lg:border-r border-border overflow-hidden transition-colors duration-300 hover:text-white reveal-up delay-100">
+        <div class="absolute inset-0 bg-[url('./modules/Borne.jpg')] bg-cover bg-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+        <div class="absolute inset-0 bg-black/85 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+        
+        <div class="relative z-10 flex flex-col h-full justify-between min-h-[360px]">
+          <!-- Numéro en orange pour structurer la lecture -->
+          <div class="text-[84px] font-black italic text-orange leading-none transition-transform duration-300 group-hover:translate-x-2">01</div>
+          <div>
+            <h3 class="text-[32px] leading-none mb-6 text-text transition-colors duration-300 group-hover:text-white uppercase font-black tracking-tighter">Borne de commande</h3>
+            <p class="text-[16px] text-muted leading-relaxed font-medium transition-colors duration-300 group-hover:text-white/80">
+              Vos clients commandent seuls, plus vite. Le ticket moyen explose grâce à l'upsell.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUIT 02 -->
+      <div class="group relative p-12 lg:p-16 bg-surface border-b lg:border-b-0 lg:border-r border-border overflow-hidden transition-colors duration-300 hover:text-white reveal-up delay-200">
+        <div class="absolute inset-0 bg-[url('./modules/webapp.jpg')] bg-cover bg-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+        <div class="absolute inset-0 bg-black/85 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+        
+        <div class="relative z-10 flex flex-col h-full justify-between min-h-[360px]">
+          <div class="text-[84px] font-black italic text-orange leading-none transition-transform duration-300 group-hover:translate-x-2">02</div>
+          <div>
+            <h3 class="text-[32px] leading-none mb-6 text-text transition-colors duration-300 group-hover:text-white uppercase font-black tracking-tighter">Web App</h3>
+            <p class="text-[16px] text-muted leading-relaxed font-medium transition-colors duration-300 group-hover:text-white/80">
+              Click & Collect, QR Code. Zéro téléchargement. Le client est autonome en moins de 10s.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUIT 03 -->
+      <div class="group relative p-12 lg:p-16 bg-surface overflow-hidden transition-colors duration-300 hover:text-white reveal-up delay-300">
+        <div class="absolute inset-0 bg-[url('./modules/fidélité.jpg')] bg-cover bg-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+        <div class="absolute inset-0 bg-black/85 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+        
+        <div class="relative z-10 flex flex-col h-full justify-between min-h-[360px]">
+          <div class="text-[84px] font-black italic text-orange leading-none transition-transform duration-300 group-hover:translate-x-2">03</div>
+          <div>
+            <h3 class="text-[32px] leading-none mb-6 text-text transition-colors duration-300 group-hover:text-white uppercase font-black tracking-tighter">Fidélité</h3>
+            <p class="text-[16px] text-muted leading-relaxed font-medium transition-colors duration-300 group-hover:text-white/80">
+              Récompenses automatiques. Faites revenir vos clients sans lever le petit doigt.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════ POURQUOI RUSH ═══════════════ -->
+  <section id="pourquoi" class="border-b border-border bg-bg">
+    
+    <!-- En-tête Bento -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 border-b border-border bg-surface">
+      <div class="py-20 px-12 lg:py-32 lg:px-24 border-b lg:border-b-0 lg:border-r border-border flex flex-col justify-center reveal-left">
+        <!-- SCALPEL ORANGE : La vitesse est notre force -->
+        <h2 class="text-[clamp(48px,6vw,84px)] leading-[0.85] text-text uppercase italic font-black tracking-tighter">
+          SIMPLE. <span class="text-orange">RAPIDE.</span><br>ACCOMPAGNÉ.
+        </h2>
+        <p class="text-[18px] text-muted max-w-[540px] mt-8 font-medium leading-[1.5]">
+          Pas de logiciel lourd. Pas de jargon. On vous aide à vendre plus dès le premier service.
+        </p>
+      </div>
+      <div class="relative overflow-hidden group min-h-[300px] lg:min-h-full bg-black reveal-up delay-100">
+        <div class="absolute inset-0 bg-black/20 z-10 group-hover:bg-transparent transition-colors duration-500"></div>
+        <img src="./mockups/stand.jpg" alt="Service au comptoir" class="absolute inset-0 w-full h-full object-cover grayscale opacity-90 transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 z-0" />
+      </div>
+    </div>
+
+    <!-- Avantages -->
+    <div class="grid grid-cols-1 lg:grid-cols-3">
+      <div class="group p-12 lg:p-16 bg-surface border-b lg:border-b-0 lg:border-r border-border hover:bg-black hover:text-white transition-colors duration-300 cursor-default reveal-up delay-100">
+        <div class="text-[32px] font-black italic text-orange mb-10">/01</div>
+        <h3 class="text-[28px] leading-none mb-6 uppercase font-black tracking-tighter text-text group-hover:text-white">Compris en 2 min</h3>
+        <p class="text-[16px] text-muted leading-relaxed font-medium transition-colors duration-300 group-hover:text-white/80">
+          Une offre claire, un bundle verrouillé. Pas de devis à rallonge.
+        </p>
+      </div>
+      
+      <div class="group p-12 lg:p-16 bg-[#F5F5F7] border-b lg:border-b-0 lg:border-r border-border hover:bg-black hover:text-white transition-colors duration-300 cursor-default reveal-up delay-200">
+        <div class="text-[32px] font-black italic text-orange mb-10">/02</div>
+        <h3 class="text-[28px] leading-none mb-6 uppercase font-black tracking-tighter text-text group-hover:text-white">Opérationnel en <span class="text-orange">72H</span></h3>
+        <p class="text-[16px] text-muted leading-relaxed font-medium transition-colors duration-300 group-hover:text-white/80">
+          Votre borne encaisse dans 72h. On s'occupe de l'installation totale.
+        </p>
+      </div>
+      
+      <div class="group p-12 lg:p-16 bg-surface hover:bg-black hover:text-white transition-colors duration-300 cursor-default reveal-up delay-300">
+        <div class="text-[32px] font-black italic text-orange mb-10">/03</div>
+        <h3 class="text-[28px] leading-none mb-6 uppercase font-black tracking-tighter text-text group-hover:text-white">Rentable à <span class="text-orange">J+1</span></h3>
+        <p class="text-[16px] text-muted leading-relaxed font-medium transition-colors duration-300 group-hover:text-white/80">
+          Un tarif transparent. Conçu pour booster votre ticket moyen.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ MÉTHODE — 4 ÉTAPES ═══════════════ -->
+  <section id="methode" class="border-b border-border bg-bg">
+    <div class="py-20 px-12 lg:py-32 lg:px-24 bg-surface border-b border-border reveal-up">
+      <h2 class="text-[clamp(48px,6vw,84px)] leading-[0.85] text-text uppercase italic font-black tracking-tighter">
+        DE ZÉRO À<br>OPÉRATIONNEL.<br><span class="text-orange">4 ÉTAPES.</span>
+      </h2>
+    </div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="group p-12 lg:p-16 bg-surface border-b lg:border-b-0 lg:border-r border-border relative overflow-hidden reveal-up delay-100">
+        <div class="font-black text-[clamp(80px,10vw,120px)] leading-[0.8] italic mb-8 text-black opacity-10 group-hover:text-orange group-hover:opacity-100 transition-all duration-300">1</div>
+        <h3 class="text-[24px] leading-none mb-6 uppercase font-black tracking-tighter text-text relative z-10">On échange</h3>
+        <p class="text-[16px] text-muted leading-relaxed font-medium relative z-10">30 minutes pour auditer votre activité et configurer.</p>
+      </div>
+      
+      <div class="group p-12 lg:p-16 bg-[#F5F5F7] border-b lg:border-b-0 lg:border-r border-border relative overflow-hidden reveal-up delay-200">
+        <div class="font-black text-[clamp(80px,10vw,120px)] leading-[0.8] italic mb-8 text-black opacity-10 group-hover:text-orange group-hover:opacity-100 transition-all duration-300">2</div>
+        <h3 class="text-[24px] leading-none mb-6 uppercase font-black tracking-tighter text-text relative z-10">On configure</h3>
+        <p class="text-[16px] text-muted leading-relaxed font-medium relative z-10">Votre menu, vos visuels, vos offres d'upsell.</p>
+      </div>
+      
+      <div class="group p-12 lg:p-16 bg-surface border-b lg:border-b-0 lg:border-r border-border relative overflow-hidden reveal-up delay-300">
+        <div class="font-black text-[clamp(80px,10vw,120px)] leading-[0.8] italic mb-8 text-black opacity-10 group-hover:text-orange group-hover:opacity-100 transition-all duration-300">3</div>
+        <h3 class="text-[24px] leading-none mb-6 uppercase font-black tracking-tighter text-text relative z-10">On installe</h3>
+        <p class="text-[16px] text-muted leading-relaxed font-medium relative z-10">Mise en place sur site et formation expresse.</p>
+      </div>
+      
+      <!-- Inversion finale -->
+      <div class="group p-12 lg:p-16 bg-black relative overflow-hidden reveal-up delay-400">
+        <div class="font-black text-[clamp(80px,10vw,120px)] leading-[0.8] italic mb-8 text-white opacity-20 group-hover:text-orange group-hover:opacity-100 transition-all duration-300">4</div>
+        <h3 class="text-[24px] leading-none mb-6 uppercase font-black tracking-tighter text-white relative z-10">Vous encaissez</h3>
+        <p class="text-[16px] text-white/70 leading-relaxed font-medium relative z-10">La borne tourne. Les clients sont autonomes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ ROI BANNER (Data Brute en Orange) ═══════════════ -->
+  <section class="bg-black border-b border-border">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="p-12 lg:p-16 border-b sm:border-b-0 sm:border-r border-white/20 hover:bg-white/5 transition-colors duration-300 reveal-up delay-100">
+        <div class="font-black text-[clamp(64px,8vw,96px)] leading-[0.8] text-orange italic mb-6">+30%</div>
+        <div class="text-[12px] uppercase font-bold tracking-[0.3em] text-white/50">De ticket moyen</div>
+      </div>
+      <div class="p-12 lg:p-16 border-b sm:border-b-0 sm:border-r border-white/20 hover:bg-white/5 transition-colors duration-300 reveal-up delay-200">
+        <div class="font-black text-[clamp(64px,8vw,96px)] leading-[0.8] text-orange italic mb-6">72H</div>
+        <div class="text-[12px] uppercase font-bold tracking-[0.3em] text-white/50">Mise en place</div>
+      </div>
+      <div class="p-12 lg:p-16 border-b sm:border-b-0 sm:border-r border-white/20 hover:bg-white/5 transition-colors duration-300 reveal-up delay-300">
+        <div class="font-black text-[clamp(64px,8vw,96px)] leading-[0.8] text-orange italic mb-6">+500</div>
+        <div class="text-[12px] uppercase font-bold tracking-[0.3em] text-white/50">Restaurants équipés</div>
+      </div>
+      <div class="p-12 lg:p-16 hover:bg-white/5 transition-colors duration-300 reveal-up delay-400">
+        <div class="font-black text-[clamp(64px,8vw,96px)] leading-[0.8] text-orange italic mb-6">98%</div>
+        <div class="text-[12px] uppercase font-bold tracking-[0.3em] text-white/50">Satisfaction client</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ AVIS ═══════════════ -->
+  <section id="avis" class="border-b border-border bg-bg overflow-hidden">
+    <div class="py-20 px-12 lg:py-32 lg:px-24 bg-surface border-b border-border reveal-up">
+      <h2 class="text-[clamp(48px,6vw,84px)] leading-[0.85] text-text uppercase italic font-black tracking-tighter">
+        LA PREUVE PAR<br>LES <span class="text-orange">RÉSULTATS.</span>
+      </h2>
+      <p class="text-[18px] text-muted max-w-[540px] mt-8 font-medium leading-[1.5]">
+        Ce que disent les exploitants indépendants après 1 mois d'utilisation.
+      </p>
+    </div>
+    
+    <!-- Slider -->
+    <div class="bg-[#F5F5F7] py-24 flex overflow-hidden whitespace-nowrap group reveal-up delay-200">
+      <div class="animate-[marquee_30s_linear_infinite] flex gap-12 px-6 group-hover:[animation-play-state:paused]">
+        
+        <article class="bg-surface p-12 min-w-[460px] max-w-[460px] border border-border whitespace-normal flex flex-col justify-between hover:bg-black hover:text-white transition-colors duration-300 cursor-default">
+          <div>
+            <div class="text-[12px] font-black uppercase tracking-[0.4em] text-orange mb-8">Note: 5.0/5.0</div>
+            <p class="text-[20px] leading-[1.5] font-medium mb-12">"La borne a réduit l'attente et augmenté notre panier moyen de 30% en deux semaines. C'est implacable."</p>
+          </div>
+          <div class="flex items-center gap-6 pt-8 border-t border-border transition-colors duration-300">
+            <div class="w-16 h-16 bg-bg flex items-center justify-center text-[24px] font-black italic text-black">J</div>
+            <div>
+              <strong class="block text-[13px] uppercase font-black tracking-[0.2em]">Julie</strong>
+              <span class="block text-[11px] uppercase tracking-[0.1em] text-muted mt-2">Manager, Le P'tit Snack</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-surface p-12 min-w-[460px] max-w-[460px] border border-border whitespace-normal flex flex-col justify-between hover:bg-black hover:text-white transition-colors duration-300 cursor-default">
+          <div>
+            <div class="text-[12px] font-black uppercase tracking-[0.4em] text-orange mb-8">Note: 4.9/5.0</div>
+            <p class="text-[20px] leading-[1.5] font-medium mb-12">"Installation expresse, équipe réactive. L'impact sur notre service du midi est monumental."</p>
+          </div>
+          <div class="flex items-center gap-6 pt-8 border-t border-border transition-colors duration-300">
+            <div class="w-16 h-16 bg-bg flex items-center justify-center text-[24px] font-black italic text-black">S</div>
+            <div>
+              <strong class="block text-[13px] uppercase font-black tracking-[0.2em]">Samir</strong>
+              <span class="block text-[11px] uppercase tracking-[0.1em] text-muted mt-2">Gérant, Snack Central</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Duplicata pour boucle fluide -->
+        <article class="bg-surface p-12 min-w-[460px] max-w-[460px] border border-border whitespace-normal flex flex-col justify-between hover:bg-black hover:text-white transition-colors duration-300 cursor-default">
+          <div>
+            <div class="text-[12px] font-black uppercase tracking-[0.4em] text-orange mb-8">Note: 5.0/5.0</div>
+            <p class="text-[20px] leading-[1.5] font-medium mb-12">"La borne a réduit l'attente et augmenté notre panier moyen de 30% en deux semaines. C'est implacable."</p>
+          </div>
+          <div class="flex items-center gap-6 pt-8 border-t border-border transition-colors duration-300">
+            <div class="w-16 h-16 bg-bg flex items-center justify-center text-[24px] font-black italic text-black">J</div>
+            <div>
+              <strong class="block text-[13px] uppercase font-black tracking-[0.2em]">Julie</strong>
+              <span class="block text-[11px] uppercase tracking-[0.1em] text-muted mt-2">Manager, Le P'tit Snack</span>
+            </div>
+          </div>
+        </article>
+        <article class="bg-surface p-12 min-w-[460px] max-w-[460px] border border-border whitespace-normal flex flex-col justify-between hover:bg-black hover:text-white transition-colors duration-300 cursor-default">
+          <div>
+            <div class="text-[12px] font-black uppercase tracking-[0.4em] text-orange mb-8">Note: 5.0/5.0</div>
+            <p class="text-[20px] leading-[1.5] font-medium mb-12">"La borne a réduit l'attente et augmenté notre panier moyen de 30% en deux semaines. C'est implacable."</p>
+          </div>
+          <div class="flex items-center gap-6 pt-8 border-t border-border transition-colors duration-300">
+            <div class="w-16 h-16 bg-bg flex items-center justify-center text-[24px] font-black italic text-black">J</div>
+            <div>
+              <strong class="block text-[13px] uppercase font-black tracking-[0.2em]">Julie</strong>
+              <span class="block text-[11px] uppercase tracking-[0.1em] text-muted mt-2">Manager, Le P'tit Snack</span>
+            </div>
+          </div>
+        </article>
+        <article class="bg-surface p-12 min-w-[460px] max-w-[460px] border border-border whitespace-normal flex flex-col justify-between hover:bg-black hover:text-white transition-colors duration-300 cursor-default">
+          <div>
+            <div class="text-[12px] font-black uppercase tracking-[0.4em] text-orange mb-8">Note: 5.0/5.0</div>
+            <p class="text-[20px] leading-[1.5] font-medium mb-12">"La borne a réduit l'attente et augmenté notre panier moyen de 30% en deux semaines. C'est implacable."</p>
+          </div>
+          <div class="flex items-center gap-6 pt-8 border-t border-border transition-colors duration-300">
+            <div class="w-16 h-16 bg-bg flex items-center justify-center text-[24px] font-black italic text-black">J</div>
+            <div>
+              <strong class="block text-[13px] uppercase font-black tracking-[0.2em]">Julie</strong>
+              <span class="block text-[11px] uppercase tracking-[0.1em] text-muted mt-2">Manager, Le P'tit Snack</span>
+            </div>
+          </div>
+        </article>
+        <article class="bg-surface p-12 min-w-[460px] max-w-[460px] border border-border whitespace-normal flex flex-col justify-between hover:bg-black hover:text-white transition-colors duration-300 cursor-default">
+          <div>
+            <div class="text-[12px] font-black uppercase tracking-[0.4em] text-orange mb-8">Note: 5.0/5.0</div>
+            <p class="text-[20px] leading-[1.5] font-medium mb-12">"La borne a réduit l'attente et augmenté notre panier moyen de 30% en deux semaines. C'est implacable."</p>
+          </div>
+          <div class="flex items-center gap-6 pt-8 border-t border-border transition-colors duration-300">
+            <div class="w-16 h-16 bg-bg flex items-center justify-center text-[24px] font-black italic text-black">J</div>
+            <div>
+              <strong class="block text-[13px] uppercase font-black tracking-[0.2em]">Julie</strong>
+              <span class="block text-[11px] uppercase tracking-[0.1em] text-muted mt-2">Manager, Le P'tit Snack</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ FOOTER ═══════════════ -->
+  <footer class="bg-surface py-20 px-12 lg:px-24 flex flex-col lg:flex-row justify-between lg:items-end gap-16 lg:gap-0 border-t border-border">
+    <div class="flex flex-col gap-8">
+      <div class="w-[140px] relative">
+        <img src="./Rush-logo.svg" alt="RU$H" class="w-full h-auto invert-on-dark" />
+      </div>
+      <div class="text-[11px] font-bold text-muted uppercase tracking-[0.4em]">
+        Powered by Bill-App
+      </div>
+    </div>
+    
+    <div class="flex flex-col sm:flex-row gap-10 sm:gap-16">
+      <a href="#" class="text-text font-black text-[13px] uppercase tracking-[0.2em] hover:text-orange transition-colors duration-200">Légal</a>
+      <a href="#" class="text-text font-black text-[13px] uppercase tracking-[0.2em] hover:text-orange transition-colors duration-200">CGU</a>
+      <a href="#" class="text-text font-black text-[13px] uppercase tracking-[0.2em] hover:text-orange transition-colors duration-200">Contact</a>
+    </div>
+  </footer>
+
+  <!-- ═══════════════ SCRIPTS ═══════════════ -->
+  <script>
+    // 1. Dark Mode
+    const toggleBtn = document.getElementById('themeToggle');
+    const htmlDoc = document.documentElement;
+    toggleBtn.addEventListener('click', () => {
+      const isDark = htmlDoc.getAttribute('data-theme') === 'dark';
+      htmlDoc.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      toggleBtn.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+    });
+
+    // 2. Moteur d'Animation Brutaliste (Intersection Observer)
+    document.addEventListener("DOMContentLoaded", () => {
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.15 
+      };
+      
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target); // Déclenche l'animation une seule fois
+          }
+        });
+      }, observerOptions);
+
+      const revealElements = document.querySelectorAll('.reveal-up, .reveal-left');
+      revealElements.forEach(el => observer.observe(el));
+    });
+  </script>
+
+  <!-- ═══════════════ CONTROL PANEL (STAGING) ═══════════════ -->
+  <button onclick="openCustomizer()" class="fixed top-1/2 right-0 -translate-y-1/2 z-[90] w-12 h-12 bg-black border-l border-y border-border text-white flex items-center justify-center hover:bg-orange transition-colors duration-200 cursor-pointer" aria-label="Ouvrir le panneau">
+    <i class="fa-solid fa-sliders"></i>
+  </button>
+  <div id="customizer-backdrop" class="fixed inset-0 bg-black/80 z-[95] hidden opacity-0 transition-opacity duration-200 backdrop-blur-sm" onclick="closeCustomizer()"></div>
+  <div id="customizer-panel" class="fixed top-0 right-0 h-full w-96 bg-surface transform translate-x-full transition-transform duration-200 z-[100] border-l border-border flex flex-col">
+    <div class="h-[80px] bg-black text-white flex justify-between items-center px-8 shrink-0">
+      <h3 class="text-[14px] font-black uppercase tracking-[0.2em] italic m-0">Panneau de contrôle</h3>
+      <button onclick="closeCustomizer()" class="text-white hover:text-orange bg-transparent border-none text-xl cursor-pointer transition-colors"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="flex-1 overflow-y-auto">
+      <div class="border-b border-border p-8 bg-bg hover:bg-surface transition-colors">
+        <label class="block text-[10px] font-bold uppercase tracking-[0.3em] mb-4 text-muted">Moteur Typographique</label>
+        <div class="grid grid-cols-2 gap-px bg-border border border-border">
+          <button onclick="setThemeVar('--app-font', '&quot;Futura PT&quot;, &quot;Jost&quot;, sans-serif')" class="bg-surface py-3 text-[12px] font-bold text-text hover:bg-black hover:text-white transition-colors">FUTURA</button>
+          <button onclick="setThemeVar('--app-font', '&quot;Inter&quot;, sans-serif')" class="bg-surface py-3 text-[12px] font-bold text-text hover:bg-black hover:text-white transition-colors">INTER</button>
+        </div>
+      </div>
+      <div class="border-b border-border p-8 bg-bg hover:bg-surface transition-colors">
+        <label class="block text-[10px] font-bold uppercase tracking-[0.3em] mb-4 text-muted">Border Radius</label>
+        <div class="grid grid-cols-3 gap-px bg-border border border-border">
+          <button onclick="setThemeVar('--app-radius', '0px')" class="bg-surface py-3 text-[12px] font-bold text-text hover:bg-black hover:text-white transition-colors">0 PX</button>
+          <button onclick="setThemeVar('--app-radius', '4px')" class="bg-surface py-3 text-[12px] font-bold text-text hover:bg-black hover:text-white transition-colors">4 PX</button>
+          <button onclick="setThemeVar('--app-radius', '8px')" class="bg-surface py-3 text-[12px] font-bold text-text hover:bg-black hover:text-white transition-colors">8 PX</button>
+        </div>
+      </div>
+      <div class="border-b border-border p-8 bg-bg hover:bg-surface transition-colors">
+        <label class="block text-[10px] font-bold uppercase tracking-[0.3em] mb-4 text-muted">Couleur d'Action</label>
+        <div class="flex gap-4">
+          <button onclick="setThemeVar('--orange', '#FF3D00')" class="w-10 h-10 bg-[#FF3D00] border border-border cursor-pointer hover:scale-110 transition-transform"></button>
+          <button onclick="setThemeVar('--orange', '#00E5FF')" class="w-10 h-10 bg-[#00E5FF] border border-border cursor-pointer hover:scale-110 transition-transform"></button>
+          <button onclick="setThemeVar('--orange', '#00FF00')" class="w-10 h-10 bg-[#00FF00] border border-border cursor-pointer hover:scale-110 transition-transform"></button>
+        </div>
+      </div>
+    </div>
+    <div class="p-8 border-t border-border bg-surface shrink-0">
+      <button onclick="resetTheme()" class="w-full py-4 bg-transparent border border-border text-text text-[11px] font-bold cursor-pointer transition-colors uppercase tracking-[0.2em] hover:bg-text hover:text-surface">
+        Reset Factory
+      </button>
+    </div>
+  </div>
+  <script>
+    const customizerPanel = document.getElementById('customizer-panel');
+    const customizerBackdrop = document.getElementById('customizer-backdrop');
+    const rootStyles = document.documentElement.style;
+    function openCustomizer() {
+      customizerPanel.classList.remove('translate-x-full');
+      customizerBackdrop.classList.remove('hidden');
+      setTimeout(() => { customizerBackdrop.classList.remove('opacity-0'); }, 10);
+    }
+    function closeCustomizer() {
+      customizerPanel.classList.add('translate-x-full');
+      customizerBackdrop.classList.add('opacity-0');
+      setTimeout(() => { customizerBackdrop.classList.add('hidden'); }, 200);
+    }
+    function setThemeVar(variable, value) { rootStyles.setProperty(variable, value); }
+    function resetTheme() {
+      rootStyles.removeProperty('--app-font');
+      rootStyles.removeProperty('--app-radius');
+      rootStyles.removeProperty('--orange');
+    }
+  </script>
+</body>
+</html>
